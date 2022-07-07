@@ -62,6 +62,7 @@ $ git init
 1. feature/home branch 생성 및 이동
 
    ```bash
+   (master) $git swtich {브랜치명}
    ```
 
    
