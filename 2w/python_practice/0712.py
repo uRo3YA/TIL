@@ -15,7 +15,6 @@ for i in word:
 	l_02_1+=1
 print(l_02_1)
 
-
 #03
 #1부터 n까지의 합을 구하여 출력하는 코드를 1) while 문 2) for 문으로 각각 작성하시오.
 num03 = 10
@@ -60,8 +59,8 @@ print(float(sum_05/cnt_05))
 #06
 #주어진 리스트 numbers에서 최댓값을 구하여 출력하시오.
 num_06 = [0, 20, 100, 50, -60, 50, 100]
-num_06_len=len(num_06)
-max_num_06=0
+
+max_num_06=num_06[0]
 for i_06 in num_06:
     if i_06>=max_num_06:
         max_num_06=i_06
@@ -70,8 +69,8 @@ print(max_num_06)
 #07
 #주어진 리스트 numbers에서 최솟값을 구하여 출력하시오.
 num_07 = [0, 20, 100, 50, -60, 50, 100]
-num_07_len=len(num_07)
-min_num_07=100000000
+
+min_num_07=num_07[0]
 for i_07 in num_07:
     if i_07<=min_num_07:
         min_num_07=i_07
@@ -79,6 +78,17 @@ print(min_num_07)
 
 #08
 #주어진 리스트 numbers에서 두번째로 큰 수를 구하여 출력하시오.
-num_08 = [0, 20, 100, 50, -60, 50, 100]
-num_08.sort()
-print(num_08[-2])
+num_08 = [0, 20, 100, 40]
+max_number_08 = num_08[0]
+second_number_08 = num_08[0]
+# 1. 전체 숫자를 반복
+for n in num_08:
+    # 만약, n이 최대보다 크다면
+    if max_number_08 < n:
+        # 최댓값이었던 것이 두번째로 큰 수
+        second_number_08 = max_number_08
+        max_number_08 = n
+    # elif second_number < n < max_number:
+    elif second_number_08 < n and n < max_number_08:
+        second_number_08 = n
+print(second_number_08)
