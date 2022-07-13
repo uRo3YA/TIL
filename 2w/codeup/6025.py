@@ -1,3 +1,3 @@
-﻿a=float(input())
-b=float(input())
-print(a+b)
+﻿a, b = map(int,input().split())
+c = a+b
+print(c)

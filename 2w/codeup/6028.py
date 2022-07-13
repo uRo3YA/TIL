@@ -1,3 +1,5 @@
-﻿a = input()
-n = int(a, 16)  
-print(format(n,'#o')[2:])
+﻿a=int(input())
+a = format(hex(a)[2:])
+a=a.upper()
+print(a)
+

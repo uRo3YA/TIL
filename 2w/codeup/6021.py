@@ -1,3 +1,3 @@
-﻿a, b  = input().split('-')
-
-print(a,b,sep="")
+﻿s=input()
+for i in range(len(s)):
+    print(s[i])

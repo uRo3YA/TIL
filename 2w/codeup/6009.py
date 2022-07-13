@@ -1,2 +1,2 @@
-c = input()
+﻿c = input()
 print(c)

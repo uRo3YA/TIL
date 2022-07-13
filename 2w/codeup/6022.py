@@ -1,3 +1,2 @@
-﻿s=input()
-for i in range(len(s)):
-    print(s[i])
+﻿s = input()
+print(s[0:2],s[2:4],s[4:6],sep=" ")
