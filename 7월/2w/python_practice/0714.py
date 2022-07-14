@@ -28,22 +28,27 @@ find() index() 메서드 사용 금지
 HappyHacking # 1 6
 banana # 1 3 5
 kiwi # 
+happyhacking
 """
 #15
 word =list(input())
+idx=len(word)+1
 for i in range(len(word)):
     if word[i]== "a":
         idx=i
-print(idx)
+if idx!=len(word)+1:
+		print(idx)
+else:
+		print(-1)
 #15.1
 idx_list=[]
 word =list(input())
 for i in range(len(word)):
     if word[i]== "a":
         idx_list.append(i)
-for i in range(len(idx_list)):
-    print(",".join(idx_list[i]))
-#출력 조건 바꾸기
+for j in range(len(idx_list)):
+    print((idx_list[j]),end=" ")
+
 """
 문제 16
 문자열 word가 주어질 때, 해당 문자열에서 모음의 갯수를 출력하시오.
@@ -61,7 +66,7 @@ for i in word:
     for j in collection:
         if i==j:
             cnt+=1
-print(collection)
+print(cnt)
 """
 문제 17
 소문자로 구성된 문자열 word가 주어질 때, 모두 대문자로 바꾸어 표현하시오.
