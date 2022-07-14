@@ -101,3 +101,17 @@ for k in word:
         if dic2[k]==0:
             print(k,dic[k])
         dic2[k]=1
+
+
+### 깔끔한 풀이
+word = input()
+my_dict = {}
+
+for i in word:
+    if i in my_dict:
+        my_dict[i] += 1
+    else:
+        my_dict[i] = 1
+
+for k,v in my_dict.items():
+    print(k, v)
