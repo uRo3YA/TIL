@@ -22,7 +22,7 @@ def movie_info(movie):
 
 # 아래의 코드는 수정하지 않습니다.
 if __name__ == '__main__':
-    movie_json = open('2회차\이태극\data\movie.json', encoding='UTF8')
+    movie_json = open('python_project\data\movie.json', encoding='UTF8')
     movie = json.load(movie_json)
    
     pprint(movie_info(movie))

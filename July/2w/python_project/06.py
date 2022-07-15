@@ -35,10 +35,10 @@ def movie_info(movies, genres):
 
 # 아래의 코드는 수정하지 않습니다.
 if __name__ == '__main__':
-    movies_json = open('2회차\이태극\data\movies.json', encoding='UTF8')
+    movies_json = open('python_project\data\movies.json', encoding='UTF8')
     movies_list = json.load(movies_json)
 
-    genres_json = open('2회차\이태극\data\genres.json', encoding='UTF8')
+    genres_json = open('python_project\data\genres.json', encoding='UTF8')
     genres_list = json.load(genres_json)
 
     pprint(movie_info(movies_list, genres_list))
