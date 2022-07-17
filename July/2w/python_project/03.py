@@ -8,7 +8,7 @@
 # Melon 1
 # berryfake 1
 
-with open('python_project/data/fruits.txt', 'r',encoding="utf-8") as d:
+with open('July/2w/python_project/data/fruits.txt', 'r',encoding="utf-8") as d:
     #word = input()
     text=d.read()
     fruit=text.split("\n")
@@ -19,7 +19,7 @@ with open('python_project/data/fruits.txt', 'r',encoding="utf-8") as d:
             fruit_dict[i] += 1
         else:
             fruit_dict[i] = 1
-    with open('python_project\03.txt', 'w',encoding="utf-8") as a:
+    with open('July/2w/python_project/03.txt', 'w',encoding="utf-8") as a:
         for k,v in fruit_dict.items():
              a.write(str(k)+" ")
              a.write(str(v)+"\n")

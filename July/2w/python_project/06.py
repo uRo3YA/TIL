@@ -13,9 +13,8 @@ def movie_info(movies, genres):
     result = []
     genre_id_name = {}
 
-    for d in genres :
-        genre_id_name[d['id']] = d['name']
-    
+    for  genre_id in genres :
+        genre_id_name[genre_id['id']] = genre_id['name']
     for i in range(len(movies)) :
         genre_name = []
         for j in movies[i]['genre_ids'] :
@@ -30,16 +29,26 @@ def movie_info(movies, genres):
          temp['title'] = d['title']
          temp['vote_average'] = d['vote_average']
          result.append(temp)
+    #평점순 정렬
+    result.sort(key=lambda x: x['vote_average'], reverse= True)
     return result
 
 
 # 아래의 코드는 수정하지 않습니다.
 if __name__ == '__main__':
-    movies_json = open('python_project\data\movies.json', encoding='UTF8')
+    movies_json = open('July/2w/python_project/data/movies.json', encoding='UTF8')
     movies_list = json.load(movies_json)
 
-    genres_json = open('python_project\data\genres.json', encoding='UTF8')
+    genres_json = open('July/2w/python_project/data/genres.json', encoding='UTF8')
     genres_list = json.load(genres_json)
-
-    pprint(movie_info(movies_list, genres_list))
-    
+    sol=movie_info(movies_list, genres_list)
+    pprint(sol)
+    #sol 타입은 리스트
+    #sol[x]는 딕셔너리
+    #pprint(movie_info(movies_list, genres_list))
+    #결과를 06.txt에 출력
+    with open('July/2w/python_project/06.txt', 'w',encoding="utf-8") as a:
+         for i in range (len(sol)):
+            for x,y in sol[i].items():
+                a.write(f'{x} : {y}\n')
+             
