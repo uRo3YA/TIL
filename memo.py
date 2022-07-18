@@ -1,20 +1,25 @@
-def is_prime(n):
-    if n == 1:
-        return False
-    for j in range(2, int(n**0.5) + 1):
-        if n % j == 0:
-            return False
-    return True
+import math
 
+def star(n):
+    s = []
+    if n==1:
+        s.append('***')
+        s.append('* *')
+        s.append('***')
+        
+    if n>=2:
+        t = star(n-1)
+        for i in range(len(t)):
+            s.append(t[i]*3)
+        for i in range(len(t)):
+            s.append(t[i] + ' '*(3**(n-1)) + t[i])
+        for i in range(len(t)):
+            s.append(t[i]*3)
+    return s
 
-for _ in range(int(input())):
-    num = int(input())
+num = int(input())
+n = int(math.log(num,3))
 
-    a, b = num//2, num//2
-    while a > 0:
-        if is_prime(a) and is_prime(b):
-            print(a, b)
-            break
-        else:
-            a -= 1
-            b += 1
+s = star(n)
+for i in range(len(s)):
+    print(s[i])
