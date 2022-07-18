@@ -3,6 +3,6 @@ total = 0
 count = 0
 for number in number_list:
     total += number
+#count += 1
     count += 1
-print(total // count)
- 
+print(total /count)

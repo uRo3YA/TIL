@@ -84,7 +84,7 @@ for number in number_list:
     total += number
 #count += 1
     count += 1
-print(total // count)
+print(total /count)
 
 
 # 예제 08. [오류 해결] 모음의 갯수 찾기
