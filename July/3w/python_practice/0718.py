@@ -1,4 +1,4 @@
-# 예제 03
+# 예제 03 [오류 해결] 입력 받기
 # 두 수를 Input으로 받아 합을 구하는 코드이다.
 # 코드에서 오류를 찾아 원인을 적고, 수정하세요.
 # Input
@@ -8,10 +8,11 @@
 ### 오류 코드
 # TypeError 
 # 입력이 문자 형태의 리스트로 받아 sum 함수 작동하지 않음
+#numbers = input().split()
 numbers = map(int,input().split())
 print(sum((numbers)))
 
-#예제 04
+# 예제 04. [오류 해결] 입력 받기 - 2
 # 아래 코드는 문자열을 입력받아 단어별로 나누는 코드입니다.
 # 코드에서 오류를 찾아 원인을 적고, 수정하세요.
 # Input
@@ -21,13 +22,14 @@ print(sum((numbers)))
 
 
 ### 오류 코드
-#ValueError
+# ValueError
 # map(int)는 정수 형태로 매핑하기 때문에
 #문자열 입력을 받을수 없다
+#words = list(map(int, input().split()))
 words = list(input().split())
 print(words)
 
-# 예제 05
+# 예제 05. [오류 해결] 숫자의 길이 구하기
 # 아래 코드는 수의 자릿수를 구하는 코드입니다.
 # 코드에서 오류를 찾아 원인을 적고, 수정하세요.
 
@@ -37,6 +39,7 @@ print(words)
 # TypeError: object of type 'int' has no len()
 # len 함수는 문자열만 인식하기 때문에 입력받은 정수를 문자열로 치환하거나
 # 10으로 나누는 반복문을 통해서 자릿수를 계산하여 반환한다. 
+
 def what_length(n):
     ans = 0
     while n:
@@ -45,9 +48,9 @@ def what_length(n):
     return ans
 number = 22020718
 print(what_length(number))
+#print(len(number))
 
-
-#  예제 06
+# 예제 06. [오류 해결] 1부터 N까지의 2의 곱 저장하기
 # 아래 코드는 1부터 N까지의 숫자에 2를 곱해서 변수에 저장하는 코드입니다.
 # 코드에서 오류를 찾아 원인을 적고, 수정하세요. 
 #  Output
@@ -60,18 +63,17 @@ print(what_length(number))
 
 N = 10
 answer = []
+#answer = ()
 for number in range(N + 1):
     answer.append(number * 2)
 print(answer)
 
-# # 예제 07
-
+# 예제 07. [오류 해결] 평균 구하기
 # 아래 코드는 평균을 구하는 논리적으로 오류가 있는 코드입니다. 
 # 코드에서 오류를 찾아 원인을 적고, 수정하세요.
-#  
 # Ouput
 # 5
-# 오류 
+# 오류코드 
 # count가 반복문 밖에 있었기 때문에 
 # 한번만 실행되었다.
 # 따라서 count를 반복문 안쪽으로 들여쓰기를 한다.
@@ -80,11 +82,12 @@ total = 0
 count = 0
 for number in number_list:
     total += number
+#count += 1
     count += 1
 print(total // count)
  
 
-# 예제 08
+# 예제 08. [오류 해결] 과일 개수 구하기
 # 아래 코드는 문자열에서 모음의 개수를 찾는 코드입니다. 
 # 코드에서 오류를 찾아 원인을 적고, 수정하세요.
 # Output
@@ -107,7 +110,7 @@ for char in word:
         count += 1
 print(count)
 
-# 예제 09
+# 예제 09. [오류 해결] 과일 개수 구하기
 # 아래 코드는 과일의 개수를 구하는 논리적 오류가 있는 코드의 일부분 입니다.
 # 코드에서 오류를 찾아 원인을 적고, 수정하세요.
 ### Output
@@ -143,11 +146,9 @@ for fruit in fruits:
 
 pprint(fruit_count)
 
-# 예제 10
-
+# 예제 10. [오류 해결] 더 큰 최댓값 찾기
 # 아래 코드는 리스트에서 최댓값을 구하는 코드입니다.
-# 코드에서 오류를 찾아 원인을 적고, 수정하세요.
-#  
+# 코드에서 오류를 찾아 원인을 적고, 수정하세요. 
 ### Output
 #두 번째 리스트의 최댓값이 더 큽니다.
 ### 오류 코드
@@ -168,7 +169,7 @@ else:
 
 
 
-# 예제 11
+# 예제 11. [오류 해결] 영화 정보 찾기
 
 # 아래 코드는 영화의 장르id를 장르 이름으로 바꿔서 영화 정보를 출력하는 코드입니다.
 # 코드에서 오류를 찾아 원인을 적고, 수정하세요.
@@ -240,9 +241,9 @@ if __name__ == "__main__":
 
 
 
-# 문제 19 숫자의 길이 구하기
+# 문제 19. 숫자의 길이 구하기
 # 양의 정수 number가 주어질 때, 숫자의 길이를 구하시오. 
-# 양의 정수number를 문자열로 변경하는 것은 금지입니다. str() 사용 금지
+# 양의 정수 number를 문자열로 변경하는 것은 금지입니다. str() 사용 금지
 # Input
 # 123
 # Output
