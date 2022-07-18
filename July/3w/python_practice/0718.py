@@ -85,32 +85,9 @@ for number in number_list:
 #count += 1
     count += 1
 print(total // count)
- 
 
-# 예제 08. [오류 해결] 과일 개수 구하기
-# 아래 코드는 문자열에서 모음의 개수를 찾는 코드입니다. 
-# 코드에서 오류를 찾아 원인을 적고, 수정하세요.
-# Output
-# 3
-### 오류 코드
-# char == "a" or "e" or "i" or "o" or "u"는 a를 제외한 나머지값은 판별이 생략되어 
-# 오류가 발생한다.
-word = "HappyHacking"
-count = 0
-for char in word:
-    if char == "a" or char == "A":
-        count += 1
-    elif char == "e" or char == "E":
-        count += 1
-    elif char == "i"or char == "I":
-        count += 1
-    elif char == "o"or char == "O":
-        count += 1
-    elif char == "u"or char == "U":
-        count += 1
-print(count)
 
-# 예제 09. [오류 해결] 과일 개수 구하기
+# 예제 08. [오류 해결] 모음의 갯수 찾기
 # 아래 코드는 과일의 개수를 구하는 논리적 오류가 있는 코드의 일부분 입니다.
 # 코드에서 오류를 찾아 원인을 적고, 수정하세요.
 ### Output
@@ -145,6 +122,29 @@ for fruit in fruits:
         fruit_count[fruit] += 1
 
 pprint(fruit_count)
+
+# 예제 09. [오류 해결] 과일 개수 구하기
+# 아래 코드는 문자열에서 모음의 개수를 찾는 코드입니다. 
+# 코드에서 오류를 찾아 원인을 적고, 수정하세요.
+# Output
+# 3
+### 오류 코드
+# char == "a" or "e" or "i" or "o" or "u"는 a를 제외한 나머지값은 판별이 생략되어 
+# 오류가 발생한다.
+word = "HappyHacking"
+count = 0
+for char in word:
+    if char == "a" or char == "A":
+        count += 1
+    elif char == "e" or char == "E":
+        count += 1
+    elif char == "i"or char == "I":
+        count += 1
+    elif char == "o"or char == "O":
+        count += 1
+    elif char == "u"or char == "U":
+        count += 1
+print(count)
 
 # 예제 10. [오류 해결] 더 큰 최댓값 찾기
 # 아래 코드는 리스트에서 최댓값을 구하는 코드입니다.
