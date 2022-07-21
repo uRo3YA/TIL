@@ -7,3 +7,4 @@
 - python OOP
 - SWEA 기본 문제 풀이
 ### 7월 20일
+- SWEA 기본 문제 풀이
