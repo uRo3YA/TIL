@@ -13,7 +13,7 @@ for i in range(1,int(input())+1):
     m3=m1+m2
     if m3>59:
         h3+=1
-        m3-=60
+        m3%=60
     if h3>12:
-        h3-=12
+        h3%=12
     print(f"#{i}",h3,m3)
