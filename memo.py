@@ -1,9 +1,5 @@
-n=int(input())
-k=list(map(int,input().split()))
-dp=[0]*n
+from math import lcm
 
-dp[0]=k[0]
-for i in range(len(k)-1):
-    if dp[i]<k[i+1]:
-        dp[i+1]=k[i]+k[i+1]
-print(max(dp))
+for i in range(int(input())):
+    a,b=(map(int,input().split()))
+    print(lcm(a,b))
