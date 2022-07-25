@@ -52,7 +52,7 @@ function
 
   * breakpoint, 변수 조회
 
-    ![스크린샷](./debug.PNG)
+    ![스크린샷](./image/debug.PNG)
 
 * Python tutor 활용 (단순 파이썬 코드인 경우)
 
