@@ -1,5 +1,6 @@
 from collections import deque
-
+import sys
+sys.stdin=open("input.txt")
 n = int(input())
 a, b = map(int, input().split())
 m = int(input())
