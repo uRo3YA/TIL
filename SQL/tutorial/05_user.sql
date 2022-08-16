@@ -1,5 +1,4 @@
-
-
+-- SQLite
 CREATE TABLE users (
 
 last_name Text NOT NULL,
