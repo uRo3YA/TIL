@@ -17,14 +17,17 @@ CREATE TABLE healthcare (
 );
 
 
+--2번
+select min(age),max(age) from healthcare ; 
+
 --3번
 select min(height),max(height),min(weight),max(weight)  from healthcare;
 --4번
 select count(*) from healthcare where height>=160 and height <=170;
+select count(*) from healthcare where  height BETWEEN 160 and 170;
 
 --5번
-SELECT waist FROM healthcare  where is_drinking=1 ORDER BY waist DESC LIMIT 3;
-SELECT waist FROM healthcare ORDER BY waist DESC LIMIT 3;
+SELECT waist FROM healthcare WHERE is_drinking = 1 AND waist != '' ORDER BY waist DESC LIMIT 5;
 
 --6번
 select count(*) from healthcare where (va_left>=1.5 and va_right>=1.5) and is_drinking=1;
@@ -37,14 +40,12 @@ SELECT avg(height),avg(weight) from healthcare WHERE gender=1;
 --10번
 
 SELECT DISTINCT id,height,weight from healthcare WHERE height=(SELECT max(height) FROM healthcare );
+-- 11번
+-- BMI는 체중/(키*키)의 계산 결과이다. 
+SELECT COUNT(*) FROM healthcare WHERE weight*10000/(height*height) >= 30;
+--12번
+SELECT  ID, weight*10000/(height*height)AS BMI 
+    FROM healthcare 
+    WHERE smoking=3 
+    ORDER BY BMI DESC LIMIT 5;
 
-SELECT id,height,weight
-  FROM (SELECT height AS RN, height
-         FROM(SELECT height
-               FROM healthcare
-              ORDER BY height DESC))
- WHERE RN = 2;
-
- -- 11번
- -- BMI는 체중/(키*키)의 계산 결과이다. 
- select (weight/(height*height)) as BMI from healthcare where BMI>=30;
