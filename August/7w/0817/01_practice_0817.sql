@@ -43,6 +43,7 @@ SELECT DISTINCT id,height,weight from healthcare WHERE height=(SELECT max(height
 -- 11번
 -- BMI는 체중/(키*키)의 계산 결과이다. 
 SELECT COUNT(*) FROM healthcare WHERE weight*10000/(height*height) >= 30;
+SELECT id,weight/(height*height*0.0001) AS BMI FROM healthcare WHERE smoking=3 ORDER BY BMI DESC LIMIT 5;
 --12번
 SELECT  ID, weight*10000/(height*height)AS BMI 
     FROM healthcare 
