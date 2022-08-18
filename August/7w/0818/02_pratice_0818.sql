@@ -3,6 +3,7 @@
 
 SELECT  smoking,COUNT(*)
 FROM healthcare
+
 GROUP BY smoking;
 
 -- 2. 음주 여부(is_drinking)로 구분한 각 그룹의 컬렴명과 그룹의 사람의 수를 출력하시오.
@@ -53,15 +54,14 @@ GROUP BY gender;
 -- 9. 각 나이대(age)의 평균 키와 평균 몸무게를 출력하시오.
 -- 평균 키와 평균 몸무게의 컬럼명을 '평균 키' '평균 몸무게'로 표시하고, 평균키가 160 이상 평균 몸무게가 60 이상인 데이터만 출력하시오.
 
-SELECT  age,avg(height) as "평균 키", avg(weight) as "평균 몸무게"
+SELECT  age,avg(height) as '평균 키', avg(weight) as "평균 몸무게"
 FROM healthcare
 GROUP BY age
 HAVING avg(height)>=160 and avg(weight)>=60;
 
 
 -- 10. 음주 여부(is_drinking)와 흡연 여부(smoking)에 따른 평균 BMI를 출력하시오.
-SELECT  is_drinking,smoking,weight*10000/(height*height)AS BMI 
+SELECT  is_drinking,smoking,avg(weight*10000/(height*height))AS "평균 BMI" 
 FROM healthcare 
 WHERE is_drinking!="" and smoking!=""
-GROUP BY is_drinking,smoking
-HAVING avg(BMI);
+GROUP BY is_drinking,smoking;
