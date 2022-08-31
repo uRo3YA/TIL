@@ -39,3 +39,11 @@
   .image {
     border-radius: 20px;
   }
+  .subtitle {
+    display: block;
+    font-size: 10px;
+  }
+  
+  .section {
+    text-align: center;
+  }
