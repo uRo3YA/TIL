@@ -1,2 +1,0 @@
-﻿c = input()
-print(c)
