@@ -1,8 +1,8 @@
 .vscode/
 venv/
 memo.py
-July/3w/python_document/image/image.zip
-.SQL
+*/image/image.zip
+
 *.sqlite3
 test.*
 # Created by https://www.toptal.com/developers/gitignore/api/python,django,visualstudiocode,macos,windows
