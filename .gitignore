@@ -2,7 +2,7 @@
 venv/
 memo.py
 */image/image.zip
-
+memo.*
 *.sqlite3
 test.*
 # Created by https://www.toptal.com/developers/gitignore/api/python,django,visualstudiocode,macos,windows
