@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>로또</h1>
+
+    <div style="padding: 5px;">
+        {% for lotto in lotto_list %}
+        <div style="padding: 5px;">
+            {% for number in lotto %}
+                <span >{{number}}</span>
+            {%endfor%}
+        </div>
+            <br>
+        {%endfor%}
+     </div>
+</body>
+</html>

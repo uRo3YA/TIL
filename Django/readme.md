@@ -178,8 +178,31 @@ pip install django==3.2.13 # Django만 설치
 ```
 ### 프로젝트 생성
 ```bash
-django-admin startproject {mysite}.
+django-admin startproject {mysite} .
 ```
+### 앱 생성
+``` bash
+python manage.py startapp {app name}
+```
+### 앱 설정
+- 생성한 프로젝트 내에서 setteing.py에서 INSTALLED_APPS에 생성한 {app name} 입력
+
+### url 설정
+- 프로젝트에서 url.py에서 설정
+  ```python
+    from random_game import views
+
+    path('',views.index)
+  ```
+### view-> 템플릿 파일지정
+1. app name 폴더 view.py
+  ```python
+  def index(request):
+
+      return render(request, 'index.html')
+  ```
+2. app name  templates 폴더 생성
+    - index.html 생성
 ### 모델 마이그레이션
 ```bash
 python manage.py makemigrations
