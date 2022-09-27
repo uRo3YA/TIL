@@ -1,7 +1,6 @@
-from multiprocessing import context
 import random
-from urllib import request
 from django.shortcuts import render
+from .models import Article
 
 # Create your views here.
 # view-> 템플릿 파일지정
@@ -105,3 +104,26 @@ def krlipsum_output(request):
 
     context = {"lorems": lorems}
     return render(request, "krlipsum_output.html", context)
+
+
+# def geustbook(request):
+#     geustbook = Article.objects.all()
+#     return render(request, "geustbook.html", {"geustbook": geustbook})
+
+
+def geustbook(request):
+    geustbook = Article.objects.all()
+    return render(request, "geustbook.html", {"geustbook": geustbook})
+
+
+create_data = []
+
+
+def create(request):
+
+    content = request.GET.get("content")
+    # create_data.append(content)
+    # DB에 저장
+    Article.objects.create(content=content)
+
+    return render(request, "create.html", {"content": content})

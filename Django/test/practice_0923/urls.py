@@ -29,8 +29,11 @@ urlpatterns = [
     path("lotto/", views.lotto),
     path("is-even-odd/<int:_number>", views.is_even_odd),
     path("calc/<int:a>/<int:b>", views.calc),
-    path("pastlife", views.pastlife),
-    path("krlipsum", views.krlipsum),
-    path("krlipsum_output", views.krlipsum_output),
+    path("pastlife/", views.pastlife),
+    path("krlipsum/", views.krlipsum),
+    path("krlipsum_output/", views.krlipsum_output),
     ## url 분리
+    # 방명록 목록
+    path("geustbook/", views.geustbook),
+    path("create/", views.create),
 ]
