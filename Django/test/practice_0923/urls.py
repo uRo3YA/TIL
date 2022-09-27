@@ -32,4 +32,5 @@ urlpatterns = [
     path("pastlife", views.pastlife),
     path("krlipsum", views.krlipsum),
     path("krlipsum_output", views.krlipsum_output),
+    ## url 분리
 ]
