@@ -15,21 +15,19 @@
 <body>
     <div class="container shadow-lg p-5 mt-5 mb-5 bg-body rounded-5" style="min-width: 770px">
         <div class="text text-center">해야할 일</div>
-        <!-- 입력양식 -->
-        <form action="{% url 'todos:create'%}">
-            <!-- 할 일 입력 -->
+        <form action="{% url 'todos:create' %}">
             <div class="input-group mb-3">
                 <span class="input-group-text">할 일</span>
                 <div class="form-floating">
-                    <input name="content" type="text" class="form-control" id="floatingInputGroup1">
+                    <input name="content_" type="text" class="form-control" id="floatingInputGroup1">
                     <label for="floatingInputGroup1" class="text-secondary">What to do</label>
                 </div>
             </div>
             <!-- 우선순위 선택 -->
             <div class="input-group mb-3">
-                <span class="input-group-text">priority</span>
+                <span class="input-group-text">우선순위</span>
                 <div class="form-floating">
-                    <select name="priority" class="form-select" id="floatingSelect"
+                    <select name="priority_" class="form-select" id="floatingSelect"
                         aria-label="Floating label select example">
                         <option value="1">1</option>
                         <option value="2">2</option>
@@ -44,7 +42,7 @@
             <div class="input-group mb-3">
                 <span class="input-group-text">마감기한</span>
                 <div class="form-floating">
-                    <input name="deadline" type="date" class="form-control" id="floatingInputGroup1">
+                    <input name="deadline_" type="date" class="form-control" id="floatingInputGroup1">
                     <label for="floatingInputGroup1">Deadline</label>
                 </div>
             </div>
@@ -53,6 +51,10 @@
                 <input class="w-100 btn btn-outline-primary" type="submit">
             </div>
         </form>
+
+
+
+
         <table class="table text-center mt-5">
             <thead>
                 <th>ID</th>
