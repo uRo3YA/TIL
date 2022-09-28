@@ -1,15 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-
-<body>
-    해야할 일
+{% block content %}
+<div class="container">
+    <div class>해야할 일</div>
     <form action="{% url 'todos:create' %}">
         <input type="text" name="content_" maxlength="80">
         <select name="priority_" id="">
@@ -23,7 +14,7 @@
         <input type="submit" value="할일추가">
     </form>
 
-    <table>
+    <table style="display:flex;">
         <thead>
             <th>ID</th>
             <th>우선 순위</th>
@@ -54,9 +45,5 @@
 
         </tbody>
     </table>
-
-
-
-</body>
-
-</html>
+</div>
+{% endblock %}

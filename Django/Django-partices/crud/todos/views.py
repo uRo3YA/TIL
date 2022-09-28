@@ -32,6 +32,14 @@ def delete(request, todo_pk):
 
 def update(request, todo_pk):
     obj = Todo.objects.get(id=todo_pk)
-    obj.completed = True
+    if obj.completed == True:
+        obj.completed = False
+    else:
+        obj.completed = True
     obj.save()
     return redirect("todos:index")
+
+
+def hello(request):
+
+    return render(request, "todos/hello.html")
