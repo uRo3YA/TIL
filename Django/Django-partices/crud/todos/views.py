@@ -15,6 +15,7 @@ def create(request):
     content = request.GET.get("content_")
     priority = request.GET.get("priority_")
     deadline = request.GET.get("deadline_")
+
     # 2. DB에 저장
     Todo.objects.create(content=content, priority=priority, deadline=deadline)
 
