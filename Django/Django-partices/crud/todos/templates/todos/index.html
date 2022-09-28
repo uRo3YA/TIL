@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    hello
+    <form action="{% url 'todos:create' %}">
+        <input type="text" name="content_" maxlength="80">
+        <input type="number" name="priority_" value="3">
+        <input type="date" name="deadline_">
+        <input type="submit" value="할일추가">
+    </form>
+
+
+    {% for todo in todos %}
+    <li>{{todo.id}} - {{todo.content}} -{{todo.completed}}-{{todo.priority}}-{{todo.created_at}}-{{todo.deadline}}
+        <a href="{% url 'todos:update' todo.pk %}">완료</a>
+        <a href="{% url 'todos:delete' todo.pk %}">삭제</a>
+    </li>
+    {% endfor %}
+</body>
+
+</html>
