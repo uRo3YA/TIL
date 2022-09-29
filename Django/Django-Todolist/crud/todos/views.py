@@ -31,13 +31,24 @@ def delete(request, todo_pk):
     return redirect("todos:index")
 
 
-def update(request, todo_pk):
+def completed_toggle(request, todo_pk):
     obj = Todo.objects.get(id=todo_pk)
-    if obj.completed == True:
-        obj.completed = False
-    else:
-        obj.completed = True
+    obj.completed = not obj.completed
     obj.save()
+    return redirect("todos:index")
+
+
+def edit(request, todo_pk):
+
+    return redirect("todos:index")
+
+
+def editUpdate(request, pk):
+    todos = Todo.objects.get(id=pk)
+    todos.content = request.GET.get("content_")
+    todos.priority = request.GET.get("priority_")
+    todos.deadline = request.GET.get("deadline_")
+    todos.save()
     return redirect("todos:index")
 
 
