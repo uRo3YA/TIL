@@ -14,6 +14,7 @@ urlpatterns = [
     ),
     path("edit/<int:todo_pk>", views.edit, name="edit"),
     ##테스트 출력용
-    path("hello", views.hello, name="hello"),
     path("editUpdate/<int:pk>", views.editUpdate, name="editUpdate"),
+    path("hello", views.hello, name="hello"),
+    # path("priority_filter/", views.priority_filter, name="priority_filter"),
 ]

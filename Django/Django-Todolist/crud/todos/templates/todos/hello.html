@@ -1,5 +1,163 @@
 {% extends 'base.html' %}
 
 {%block content%}
-<h1 class="text-center">hello</h1>
+<div class="container shadow-lg p-5 mt-5 mb-5 bg-body rounded-5" style="min-width: 770px">
+    <div class="text text-center">해야할 일</div>
+    <!-- 입력 폼 -->
+    <form action="{% url 'todos:create' %}">
+        <div class="input-group mb-3">
+            <span class="input-group-text">할 일</span>
+            <div class="form-floating">
+                <input name="content_" type="text" class="form-control" id="floatingInputGroup1">
+                <label for="floatingInputGroup1" class="text-secondary">What to do</label>
+            </div>
+        </div>
+        <!-- 우선순위 선택 -->
+        <div class="input-group mb-3">
+            <span class="input-group-text">우선순위</span>
+            <div class="form-floating">
+                <select name="priority_" class="form-select" id="floatingSelect"
+                    aria-label="Floating label select example">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3" selected>3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                </select>
+                <label for="floatingSelect">우선순위 선택</label>
+            </div>
+        </div>
+        <!-- 데드라인 설정 -->
+        <div class="input-group mb-3">
+            <span class="input-group-text">마감기한</span>
+            <div class="form-floating">
+                <input name="deadline_" type="date" class="form-control" id="floatingInputGroup1">
+                <label for="floatingInputGroup1">Deadline</label>
+            </div>
+        </div>
+        <!-- 할 일 추가 -->
+        <div class="mt-5">
+            <input class="w-100 btn btn-outline-primary" type="submit">
+        </div>
+    </form>
+
+
+
+
+    <table class="table text-center align-middle">
+        <thead>
+            <th>ID</th>
+            <th>우선 순위</th>
+            <th>할 일 내용</th>
+            <th>생성 날짜</th>
+            <th>마감 기한</th>
+            <th>진행 상태</th>
+            <th>상태 변경</th>
+            <th>수정</th>
+            <th>삭제</th>
+        </thead>
+        <tbody>
+            {% for todo in todos %}
+            <tr>
+
+                <td>{{todo.id}}</td>
+                <td>{{todo.priority}}</td>
+                <td>
+                    {% if todo.completed == True %}
+                    <div class="text-decoration-line-through">{{todo.content}}</div>
+                    {% else %}
+                    {{todo.content}}
+                    {% endif %}
+                </td>
+                <td>{{todo.created_at |date:'Y년 m월 d일'}}</td>
+                <td>{{todo.deadline |date:'Y년 m월 d일' }}</td>
+                <td>
+                    {% if todo.completed == True %}
+                    <div class="badge bg-primary text-wrap"> 완료</div>
+                    {% else %}
+                    <div class="badge bg-secondary text-wrap">미완료</div>
+
+                    {% endif %}
+
+                </td>
+                <td>
+                    <a href="{% url 'todos:completed_toggle' todo.pk %}">
+                        {% if todo.completed == True %}
+                        <input type="submit" class="btn btn-warning" value="미완료">
+                        {% else %}
+                        <input type="submit" class="btn btn-success" value="완료">
+                        {% endif %}
+                    </a>
+                </td>
+                <td>
+
+                    <!-- Button trigger modal -->
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                        data-bs-target="#modal{{todo.id}}">
+                        수정
+                    </button>
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="modal{{todo.id}}" tabindex="-1" aria-labelledby="exampleModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">수정</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form action="{% url 'todos:editUpdate' todo.pk %}">
+                                        {# 할 일 #}
+                                        <div class="input-group mb-3">
+                                            <span class="bg-white fw-light input-group-text" id="todolist">할 일</span>
+                                            <input value="{{ todo.content }}" type="text" name="content_"
+                                                class="form-control" aria-label="todo" aria-describedby="todolist"
+                                                maxlength="80">
+                                        </div>
+                                        {# 우선 순위 #}
+                                        <div class="input-group mb-3">
+                                            <label class="bg-white fw-light input-group-text"
+                                                for="inputGroupSelect01">우선 순위</label>
+                                            <select class="form-select" id="inputGroupSelect01" name="priority_">
+                                                <option value="{{ todo.priority }}" selected hidden>{{ todo.priority }}
+                                                </option>
+                                                <option value="1">1</option>
+                                                <option value="2">2</option>
+                                                <option value="3">3</option>
+                                                <option value="4">4</option>
+                                                <option value="5">5</option>
+                                            </select>
+                                        </div>
+                                        {# 마감 기한 #}
+                                        <div class="input-group mb-3">
+                                            <span class="bg-white fw-light input-group-text" id="basic-addon1">마감
+                                                기한</span>
+                                            <input value="{{todo.deadline|date:'Y-m-d'}}" type="date"
+                                                class="form-control" name="deadline_" placeholder="Username"
+                                                aria-label="Username" aria-describedby="basic-addon1">
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="submit" class="btn btn-primary">수정 완료</button>
+                                        </div>
+                                    </form>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    </a>
+                </td>
+                <td>
+                    <a href="{% url 'todos:delete' todo.pk %}">
+                        <input type="submit" class="btn btn-danger" value="삭제">
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+
+        </tbody>
+    </table>
+</div>
 {%endblock%}

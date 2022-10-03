@@ -49,9 +49,24 @@ def editUpdate(request, pk):
     todos.priority = request.GET.get("priority_")
     todos.deadline = request.GET.get("deadline_")
     todos.save()
+
     return redirect("todos:index")
 
 
 def hello(request):
+    # 대강의 필터 구현
+    data = []
+    for obj in Todo.objects.filter(priority=5):
+        data.append(obj)
+    context = {"todos": data}
+    return render(request, "todos/hello.html", context)
 
-    return render(request, "todos/hello.html")
+    # return render(request, "todos/hello.html")
+
+
+# def priority_filter(request):
+#     todos = []
+#     for obj in Todo.objects.filter(priority=5):
+#         todos.append(obj)
+#     context = {"todos": todos}
+#     return render(request, "todos:index")
