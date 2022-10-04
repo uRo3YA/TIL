@@ -1,0 +1,7 @@
+<h1>글 수정하기</h1>
+<!--액션을 생략하면 자동으로 호출-->
+<form action="" method="POST">
+  {% csrf_token %}
+  {{ article_form.as_p }}
+  <input type="submit" value="수정">
+</form>
