@@ -1,21 +1,25 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'base.html' %}
+{% load static %}
+{% load django_bootstrap5 %}
 
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-</head>
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+{% endblock %}
 
-<body>
-  <h1>게시판</h1>
+{% block body %}
+<h1>게시판</h1>
+<div class="col-12 d-flex justify-content-center">
+  <img class="about__img" src="{% static 'images/apparel.jpeg' %}" alt="">
+</div>
+<div class="col-12 m-1">
   <a href="{% url 'articles:create' %}">글 쓰기</a>
+</div>
+<div class="col-12 m-1">
   {% for article in articles %}
+
   <h3><a href="{% url 'articles:detail' article.pk %}">{{ article.title }}</a></h3>
   <p>{{ article.created_at }} | {{ article.updated_at }}</p>
-  <hr>
   {% endfor %}
-</body>
+</div>
 
-</html>
+{% endblock %}

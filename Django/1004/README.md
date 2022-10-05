@@ -137,6 +137,65 @@ index.html
 </html>
 ```
 
+### 4. base.html로 templates 설정
+
+- 프로젝트 폴더의 하위에 `templates` 폴더 생성후 `base.html` 파일 생성
+- 부트스트랩과 글꼴도 함께 적용
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css">
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.min.js"
+    integrity="sha384-Atwg2Pkwv9vp0ygtn1JAojH0nYbwNJLPhwyoVbhoPwBhjQPR5VtM2+xf0Uwh9KtT"
+    crossorigin="anonymous"></script>
+  <style>
+    * {
+      font-family: "Noto Sans KR", sans-serif;
+    }
+  </style>
+  <title>Document</title>
+</head>
+
+<body>
+  {% block content %} {% endblock %}
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-u1OknCvxWvY5kfmNBILK2hRnQC3Pr17a+RTT6rIHI7NnikvbZlHgTPOOmMi466C8"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
+    integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.min.js"
+    integrity="sha384-7VPbUDkoPSGFnVtYi0QogXtr74QeVeeIs99Qfg5YCF+TidwNdjvaKZX19NZ/e6oz"
+    crossorigin="anonymous"></script>
+</body>
+
+</html>
+```
+
+- 프로젝트 단위의 settings.py에 템플릿 적용
+
+```python
+# pjt/settings.py
+TEMPLATES = [
+    {
+        'DIRS': [BASE_DIR / "templates"],
+        ...
+    }
+]
+```
+
 <br>
 
 ## 3. Model 정의 (DB 설계)
@@ -268,7 +327,44 @@ new.html
 </html>
 ```
 
-<br>
+- `{% csrf_token %}` : CSRF 공격을 방어하기 위해 POST 요청에 대해서만 csrf token을 발급하고 체크 
+
+```html
+<!-- articles/templates/articles/index.html -->
+{% extends 'base.html' %}
+{% block content %}
+<h1>게시판 목록</h1>
+<a href="{% url 'articles:create' %}">글쓰기</a>
+{% endblock %}
+```
+
+```html
+<!-- articles/templates/articles/create.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>글쓰기</h1>
+<form action="" method="POST">
+  {% csrf_token %}
+  {{ article_form.as_p }}
+  <input type="submit" value="글쓰기">
+</form>
+{% endblock %}
+```
+
+- HTML Form 태그 활용시 핵심
+  - 어떤 필드를 구성할 것인지(`name`, `value`)
+  - 어디로 보낼 것인지(`action`, `method`)
+
+```python
+# articles/views.py
+def create(request):
+    article_form = ArticleForm()
+    context = {
+        'article_form': article_form
+    }
+    return render(request, 'articles/create.html', context)
+```
 
 #### 2. 읽기(Read)
 
@@ -328,6 +424,28 @@ index.html
 </body>
 
 </html>
+```
+
+```python
+# articles/views.py
+def index(request):
+    articles = Article.objects.all()
+    context = {
+        'articles': articles,
+    }
+    return render(request, 'articles/index.html', context)
+```
+
+```html
+<!-- articles/templates/articles/detail.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>게시판 목록</h1>
+{% for article in articles %}
+<p>{{ article.title }}</p>
+{% endfor %}
+{% endblock %}
 ```
 
 ## Django ModelForm
