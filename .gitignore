@@ -1,6 +1,7 @@
 .vscode/
 venv/
-
+# SECRET_KEY
+secrets.json
 */image/image.zip
 memo.*
 *.sqlite3
