@@ -35,8 +35,9 @@ python manage.py startapp {app name} # 프로젝트 내부 각 앱마다 생성
 
 #### 모델 마이그레이션
 
-> **주의: 마이그레이션은 마지막에 실행 할 것!
-> 프로젝트 도중 모델을 수정하게 될 경우 에러가 발생한다.**
+> **주의: 마이그레이션은 마지막에 실행 할 것!**
+> 
+> - 프로젝트 도중 모델을 수정하게 될 경우 에러가 발생한다.
 
 ```bash
 python manage.py makemigrations
@@ -46,10 +47,10 @@ python manage.py migrate
 
 #### 데이터베이스 초기화
 
-> migrations 파일 삭제
-> migrations 폴더 및 __init__.py는 삭제하지 않음
-> 번호가 붙은 파일만 삭제
-> db.sqlite3 삭제
+> - migrations 파일 삭제
+> - migrations 폴더 및 __init__.py는 삭제하지 않음
+> - 번호가 붙은 파일만 삭제
+> - db.sqlite3 삭제
 
 #### 서버 실행
 
