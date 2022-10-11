@@ -1,19 +1,29 @@
 # 빠른 시작을 위한 Django 프로젝트 기본 가이드
-## 프로젝트 시작
+
+## 프로젝트 생성
+
+#### 가상환경 생성
+
 ```python
 # 가상환경 생성
 python -m venv venv
 ```
+
+#### 가상환경 실행
 
 ```python
 # 가상환경 실행
 . venv/scripts/active
 ```
 
+#### 패키지 설치
+
 ```python
 # 미리 준비된 패키지 일괄 설치
 pip instrall -r requirements.txt
 ```
+
+#### 프로젝트 생성 및 앱 생성
 
 ```python
 django-admin startproject pjt . #pjt는 프로젝트명
@@ -23,7 +33,31 @@ django-admin startproject pjt . #pjt는 프로젝트명
 python manage.py startapp {app name} # 프로젝트 내부 각 앱마다 생성
 ```
 
-프로젝트 기본 템플릿 폴더
+#### 모델 마이그레이션
+
+> **주의: 마이그레이션은 마지막에 실행 할 것!
+> 프로젝트 도중 모델을 수정하게 될 경우 에러가 발생한다.**
+
+```bash
+python manage.py makemigrations
+
+python manage.py migrate
+```
+
+#### 데이터베이스 초기화
+
+> migrations 파일 삭제
+> migrations 폴더 및 __init__.py는 삭제하지 않음
+> 번호가 붙은 파일만 삭제
+> db.sqlite3 삭제
+
+#### 서버 실행
+
+```bash
+python manage.py runserver
+```
+
+### 프로젝트 기본 템플릿 폴더
 
 ```bash
 #pjt/templates
@@ -31,7 +65,7 @@ base.html # 각 페이지의 기본 바탕이 되는 기초 페이지
 root.html # 루트 페이지 http://127.0.0.1:8000/
 ```
 
-프로젝트 기본 설정
+### 프로젝트 기본 설정
 
 ```python
 #pjt/setting.py
@@ -62,7 +96,7 @@ SECRET_KEY = get_secret("SECRET_KEY")
 # secrets.json은 gitignore로 설정해서 업로드 안되게 하자
 ```
 
-앱 설정
+### 앱 설정
 
 ```python
 #pjt/setting.py
@@ -73,9 +107,9 @@ INSTALLED_APPS = [
     ...
 ```
 
-부트스트랩 확장을 위한 설정
+### 부트스트랩 확장을 위한 설정
 
-```
+```python
 #pjt/setting.py
 TEMPLATES = [
             ...
@@ -83,7 +117,7 @@ TEMPLATES = [
             ...
 ```
 
-시간대 설정
+### 시간대 설정
 
 ```python
 #pjt/setting.py
@@ -98,14 +132,14 @@ USE_L10N = True
 USE_TZ = True
 ```
 
-커스텀 유저 Auth 설정
+### 커스텀 유저 Auth 설정
 
 ```python
 #pjt/setting.py
 AUTH_USER_MODEL = "accounts.User"
 ```
 
-프로젝트 URL 설정
+### 프로젝트 URL 설정
 
 ```python
 #pjt/urls.py
@@ -125,15 +159,18 @@ urlpatterns = [
 
 ## accounts 앱
 
-user 생성, 그 리스트, user의 상세 정보를 출력
-``` bash
+### user 생성, 그 리스트, user의 상세 정보를 출력
+
+```bash
 accounts
 ├── templates/accounts
-│   			├── index.html  # 생성된 user 리스트 출력
-│   			├── signup.html # user 생성
-│   			└── detail.html # user의 상세 정보 출력
+│               ├── index.html  # 생성된 user 리스트 출력
+│               ├── signup.html # user 생성
+│               └── detail.html # user의 상세 정보 출력
 ```
-admin 설정
+
+### admin 설정
+
 ```python
 #accounts/admin.py
 from django.contrib import admin
@@ -142,7 +179,9 @@ from django.contrib.auth import get_user_model
 
 admin.site.register(get_user_model(), UserAdmin)
 ```
-user 생성을 위한 입력 form 설정 
+
+### user 생성을 위한 입력 form 설정
+
 ```python
 #accounts/forms.py
 # from .models import User
@@ -156,9 +195,10 @@ class CustomUserCreationForm(UserCreationForm):
             "username",
             "email",
         )
-
 ```
-DB에 저장 하기 위한 데이터 형식 설정
+
+### DB에 저장 하기 위한 데이터 형식 설정
+
 ```python
 #accounts/models.py
 from django.contrib.auth.models import AbstractUser
@@ -166,10 +206,10 @@ from django.contrib.auth.models import AbstractUser
 # Create your models here.
 class User(AbstractUser):
     pass
-
 ```
 
-accounts 앱을 표시 위한 URL 설정
+### accounts 앱을 표시 위한 URL 설정
+
 ```python
 #accounts/urls.py
 from django.urls import path
@@ -182,9 +222,10 @@ urlpatterns = [
     path("signup/", views.signup, name="signup"),
     path("<int:pk>/", views.detail, name="detail"),
 ]
-
 ```
-accounts 앱을 구동을 위한 view 설정
+
+### accounts 앱을 구동을 위한 view 설정
+
 ```python
 #accounts/views.py
 from django.shortcuts import render, redirect
@@ -221,7 +262,123 @@ def detail(request, pk):
     user = get_user_model().objects.get(pk=pk)
     context = {"user": user}
     return render(request, "accounts/detail.html", context)
-
 ```
 
+## articles 앱
 
+### articles 구조
+
+```bash
+articles
+├── templates/articles
+│               ├── index.html  # 생성된 article 리스트 출력
+│               ├── form.html   # article 생성
+│               └── detail.html # article의 상세 정보 출력
+```
+
+### admin 설정
+
+```python
+#articles/admin.py
+from django.contrib import admin
+from .models import Article
+
+# Register your models here.
+# https://docs.djangoproject.com/en/3.2/intro/tutorial07/
+class ArticleAdmin(admin.ModelAdmin):
+    list_display = ("title", "created_at", "updated_at")
+
+
+admin.site.register(Article, ArticleAdmin)
+```
+
+### article 생성을 위한 입력 form 설정
+
+```python
+#articles/forms.py
+from django import forms
+from .models import Article
+
+
+class ArticleForm(forms.ModelForm):
+    class Meta:
+        model = Article
+        fields = ["title", "content"]
+```
+
+### DB에 저장 하기 위한 데이터 형식 설정
+
+```python
+#articles/models.py
+from django.db import models
+
+# Create your models here.
+"""
+게시판 기능 
+- 제목(20글자이내)
+- 내용(긴 글)
+- 글 작성시간/수정시간(자동으로 기록, 날짜/시간)
+"""
+# 1. 모델 설계 (DB 스키마 설계)
+class Article(models.Model):
+    title = models.CharField(max_length=20)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+```
+
+### articles 앱을 표시 위한 URL 설정
+
+```python
+#articles/urls.py
+# URL설정을 app 단위로!
+from django.urls import path
+from . import views
+
+app_name = "articles"
+
+urlpatterns = [
+    path("", views.index, name="index"),
+    path("create/", views.create, name="create"),
+    path("<int:pk>/", views.detail, name="detail"),
+]
+```
+
+### articles 앱을 구동을 위한 view 설정
+
+```python
+#articles/views.py
+from django.shortcuts import render, redirect
+from .models import Article
+from .forms import ArticleForm
+
+# Create your views here.
+
+# 요청 정보를 받아서..
+def index(request):
+    # 게시글을 가져와서..
+    articles = Article.objects.order_by("-pk")
+    # Template에 전달한다.
+    context = {"articles": articles}
+    return render(request, "articles/index.html", context)
+
+
+def create(request):
+    if request.method == "POST":
+        article_form = ArticleForm(request.POST)
+        if article_form.is_valid():
+            article_form.save()
+            return redirect("articles:index")
+    else:
+        article_form = ArticleForm()
+    context = {"article_form": article_form}
+    return render(request, "articles/form.html", context=context)
+
+
+def detail(request, pk):
+    # 특정 글을 가져온다.
+    article = Article.objects.get(pk=pk)
+    # template에 객체 전달
+    context = {"article": article}
+    return render(request, "articles/detail.html", context)
+```
