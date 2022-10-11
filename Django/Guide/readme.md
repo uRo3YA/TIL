@@ -13,7 +13,7 @@ python -m venv venv
 
 ```python
 # 가상환경 실행
-. venv/scripts/active
+. venv/scripts/activate
 ```
 
 #### 패키지 설치
