@@ -67,7 +67,9 @@ root.html # 루트 페이지 http://127.0.0.1:8000/
 ```
 
 ## 프로젝트 기본 설정
+
 ### 프로젝트 보안 설정
+
 ```python
 #pjt/setting.py
 # 보안을 위한 SECRET_KEY 분리
@@ -165,9 +167,10 @@ urlpatterns = [
 ```bash
 accounts
 ├── templates/accounts
-│               ├── index.html  # 생성된 user 리스트 출력
-│               ├── signup.html # user 생성
-│               └── detail.html # user의 상세 정보 출력
+│                   ├── index.html  # 생성된 user 리스트 출력
+│                   ├── signup.html # user 생성
+│                   ├── login.html # 로그인 출
+│                   └── detail.html # user의 상세 정보 출력
 ```
 
 ### admin 설정
@@ -221,7 +224,9 @@ app_name = "accounts"
 urlpatterns = [
     path("", views.index, name="index"),
     path("signup/", views.signup, name="signup"),
-    path("<int:pk>/", views.detail, name="detail"),
+    path("<int:pk>/", views.detail, name="detail"),    
+    path("login/", views.login, name="login"),
+    path("logout/", views.logout, name="logout"),
 ]
 ```
 
@@ -231,13 +236,15 @@ urlpatterns = [
 #accounts/views.py
 from django.shortcuts import render, redirect
 
-
-# from django.contrib.auth.forms import UserCreationForm
 from .forms import CustomUserCreationForm
 from .models import User
 
-# from .models import User
+from .forms import CustomUserCreationForm
 from django.contrib.auth import get_user_model
+
+from django.contrib.auth import login as auth_login
+from django.contrib.auth import logout as auth_logout
+from django.contrib.auth.forms import AuthenticationForm
 
 # Create your views here.
 def index(request):
@@ -263,6 +270,29 @@ def detail(request, pk):
     user = get_user_model().objects.get(pk=pk)
     context = {"user": user}
     return render(request, "accounts/detail.html", context)
+
+
+def login(request):
+    if request.method == "POST":
+        # AuthenticationForm은 ModelForm이 아님!
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            # 세션에 저장
+            # login 함수는 request, user 객체를 인자로 받음
+            # user 객체는 어디있어요? 바로 form에서 인증된 유저 정보를 받을 수 있음
+            auth_login(request, form.get_user())
+            # http://127.0.0.1:8000/accounts/login/?next=/articles/1/update/
+            # request.GET.get('next') : /articles/1/update/
+            return redirect(request.GET.get("next") or "articles:index")
+    else:
+        form = AuthenticationForm()
+    context = {"form": form}
+    return render(request, "accounts/login.html", context)
+
+
+def logout(request):
+    auth_logout(request)
+    return redirect("articles:index")
 ```
 
 ## articles 앱
@@ -272,9 +302,9 @@ def detail(request, pk):
 ```bash
 articles
 ├── templates/articles
-│               ├── index.html  # 생성된 article 리스트 출력
-│               ├── form.html   # article 생성
-│               └── detail.html # article의 상세 정보 출력
+│                   ├── index.html  # 생성된 article 리스트 출력
+│                   ├── form.html   # article 생성
+│                   └── detail.html # article의 상세 정보 출력
 ```
 
 ### admin 설정
@@ -342,6 +372,7 @@ urlpatterns = [
     path("", views.index, name="index"),
     path("create/", views.create, name="create"),
     path("<int:pk>/", views.detail, name="detail"),
+
 ]
 ```
 
@@ -352,7 +383,7 @@ urlpatterns = [
 from django.shortcuts import render, redirect
 from .models import Article
 from .forms import ArticleForm
-
+from django.contrib.auth.decorators import login_required
 # Create your views here.
 
 # 요청 정보를 받아서..
@@ -364,6 +395,7 @@ def index(request):
     return render(request, "articles/index.html", context)
 
 
+@login_required
 def create(request):
     if request.method == "POST":
         article_form = ArticleForm(request.POST)
@@ -382,4 +414,22 @@ def detail(request, pk):
     # template에 객체 전달
     context = {"article": article}
     return render(request, "articles/detail.html", context)
+
+
+@login_required
+def update(request, pk):
+    article = Article.objects.get(pk=pk)
+    if request.method == "POST":
+        # POST : input 값 가져와서, 검증하고, DB에 저장
+        article_form = ArticleForm(request.POST, instance=article)
+        if article_form.is_valid():
+            # 유효성 검사 통과하면 저장하고, 상세보기 페이지로
+            article_form.save()
+            return redirect("articles:detail", article.pk)
+        # 유효성 검사 통과하지 않으면 => context 부터해서 오류메시지 담긴 article_form을 랜더링
+    else:
+        # GET : Form을 제공
+        article_form = ArticleForm(instance=article)
+    context = {"article_form": article_form}
+    return render(request, "articles/form.html", context)
 ```

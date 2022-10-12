@@ -1,13 +1,14 @@
 from django.shortcuts import render, redirect
 
-# from django.contrib.auth.forms import UserCreationForm
 from .forms import CustomUserCreationForm
 from .models import User
+
+from .forms import CustomUserCreationForm
+from django.contrib.auth import get_user_model
+
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.forms import AuthenticationForm
-from .forms import CustomUserCreationForm
-from django.contrib.auth import get_user_model
 
 # Create your views here.
 def index(request):
