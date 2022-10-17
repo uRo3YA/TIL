@@ -50,10 +50,12 @@ INSTALLED_APPS = [
     "articles",
     "accounts",
     "django_bootstrap5",
-    "django.contrib.admin",
-    "django.contrib.auth",
+    "django_extensions",
+    "imagekit",
+    "django.contrib.admin",  # 관리자
+    "django.contrib.auth",  # 유저/인증
     "django.contrib.contenttypes",
-    "django.contrib.sessions",
+    "django.contrib.sessions",  # 세션 관리
     "django.contrib.messages",
     "django.contrib.staticfiles",
 ]
@@ -138,9 +140,19 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 
+# Media files (user uploaded filed)
+
+MEDIA_ROOT = BASE_DIR / "images"
+MEDIA_URL = "/media/"
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTH_USER_MODEL = "accounts.User"
+
+
+# Message Framework
+# https://docs.djangoproject.com/en/4.1/ref/contrib/messages/
+MESSAGE_STORAGE = "django.contrib.messages.storage.cookie.CookieStorage"

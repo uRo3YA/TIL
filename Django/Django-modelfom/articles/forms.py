@@ -5,7 +5,7 @@ from .models import Article
 class ArticleForm(forms.ModelForm):
     class Meta:
         model = Article
-        fields = ["title", "content"]
+        fields = ["title", "content", "image"]
         labels = {"title": "제목", "content": "내용"}
         widgets = {
             "title": forms.TextInput(
