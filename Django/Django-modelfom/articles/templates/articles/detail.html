@@ -3,6 +3,7 @@
 
 {% block body %}
 <h1>{{ article.pk }}번 게시글</h1>
+<h3>{{ article.user.username }}</h3>
 <p>{{ article.created_at|date:"SHORT_DATETIME_FORMAT" }} | {{ article.updated_at|date:"y-m-d D" }}</p>
 <p>{{ article.content }} </p>
 {% if article.image %}
