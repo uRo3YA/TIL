@@ -24,4 +24,5 @@ urlpatterns = [
     path("", views.root),
     path("articles/", include("articles.urls")),
     path("accounts/", include("accounts.urls")),
+    path("martor/", include("martor.urls")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
