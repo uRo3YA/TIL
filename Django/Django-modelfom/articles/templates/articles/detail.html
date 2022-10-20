@@ -11,9 +11,10 @@
 <img src="{{ article.image.url }}" alt="{{ article.image }}" width="400" height="300">
 {% endif %}
 {% if request.user == article.user %}
-<p>
-    <a href="{% url 'articles:update' article.pk %}">수정하기</a>
-</p>
+<div class="d-flex justify-content-end">
+    <a class="m-1 btn btn-secondary" href="{% url 'articles:update' article.pk %}">수정</a>
+    <a class="m-1 btn btn-secondary" href="{% url 'articles:delete' article.pk %}">삭제</a>
+</div>
 {% endif %}
 {% if comments %}
 <p><b>{{ comments|length }}개의 댓글이 있습니다.</b></p>
