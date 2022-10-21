@@ -85,9 +85,9 @@ def update(request, pk):
     if request.user == article.user:
         if request.method == "POST":
             article_form = ArticleForm(request.POST, request.FILES, instance=article)
-            if len(request.FILES) != 0:
-                if len(article.image) > 0:
-                    os.remove(article.image.path)
+            # if len(request.FILES) != 0:
+            #     if len(article.image) > 0:
+            #         os.remove(article.image.path)
             if article_form.is_valid():
                 article_form.save()
                 messages.success(request, "글이 수정되었습니다.")
