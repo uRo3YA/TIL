@@ -16,6 +16,12 @@
 
 8. 이미지 수정 기능 
 
+9. 좋아요 기능
+
+10. 팔로우 기능
+
+11. "GET /serviceworker.js HTTP/1.1" 404
+- 개발자도구-application-unregister
 
 
 

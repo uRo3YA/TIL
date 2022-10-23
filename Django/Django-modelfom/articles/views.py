@@ -1,10 +1,11 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .models import Article, Comment
 from .forms import ArticleForm, CommentForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import HttpResponseForbidden
 import os
+from django.views.decorators.http import require_POST, require_safe
 
 # from xml.etree.ElementTree import Comment
 # ????
@@ -12,6 +13,7 @@ import os
 # Create your views here.
 
 # 요청 정보를 받아서..
+@require_safe
 def index(request):
     # 게시글을 가져와서..
     articles = Article.objects.order_by("-pk")
@@ -47,7 +49,7 @@ def create(request):
 
 def detail(request, pk):
     # 특정 글을 가져온다.
-    article = Article.objects.get(pk=pk)
+    article = get_object_or_404(Article, pk=pk)
     comment_form = CommentForm()
     # template에 객체 전달
     context = {
@@ -81,7 +83,7 @@ def detail(request, pk):
 #             return redirect("articles:detail", article.pk)
 @login_required
 def update(request, pk):
-    article = Article.objects.get(pk=pk)
+    article = get_object_or_404(Article, pk=pk)
     if request.user == article.user:
         if request.method == "POST":
             article_form = ArticleForm(request.POST, request.FILES, instance=article)
@@ -105,7 +107,7 @@ def update(request, pk):
 
 @login_required
 def comment_create(request, pk):
-    article = Article.objects.get(pk=pk)
+    article = get_object_or_404(Article, pk=pk)
     comment_form = CommentForm(request.POST)
     if comment_form.is_valid():
         comment = comment_form.save(commit=False)
@@ -117,7 +119,7 @@ def comment_create(request, pk):
 
 @login_required
 def delete(request, pk):
-    article = Article.objects.get(pk=pk)
+    article = get_object_or_404(Article, pk=pk)
     article.delete()
     return redirect("accounts:detail", request.user.pk)
 
@@ -130,7 +132,7 @@ def comments_delete(request, article_pk, comment_pk):
 
 @login_required
 def like(request, pk):
-    article = Article.objects.get(pk=pk)
+    article = get_object_or_404(Article, pk=pk)
     # 만약에 로그인한 유저가 이 글을 좋아요를 눌렀다면,
     # if article.like_users.filter(id=request.user.id).exists():
     if request.user in article.like_users.all():
