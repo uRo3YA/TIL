@@ -6,10 +6,19 @@
 <p>{{ article.pk }}번 게시글</p>
 <h3><a href="{% url 'accounts:detail' article.user.pk %}">{{ article.user.username }}</a></h3>
 <p>{{ article.created_at|date:"SHORT_DATETIME_FORMAT" }} | {{ article.updated_at|date:"y-m-d D" }}</p>
+<p> 좋아요:
+    {% if request.user.is_authenticated %}
+    <a href="{% url 'articles:like' article.pk %}"> 반응</a>
+    {{ article.like_users.count }}
+    {%else%}
+    {{ article.like_users.count }}
+    {% endif %}
+</p>
 <p>{{ article.content }} </p>
 {% if article.image %}
 <img src="{{ article.image.url }}" alt="{{ article.image }}" width="400" height="300">
 {% endif %}
+
 {% if request.user == article.user %}
 <div class="d-flex justify-content-end">
     <a class="m-1 btn btn-secondary" href="{% url 'articles:update' article.pk %}">수정</a>
