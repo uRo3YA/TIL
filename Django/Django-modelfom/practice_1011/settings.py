@@ -141,7 +141,7 @@ USE_TZ = True
 # mator
 # STATIC_ROOT = os.path.join(BASE_DIR, "static")
 STATIC_URL = "/static/"
-
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
 # Media files (user uploaded filed)
 
 MEDIA_ROOT = BASE_DIR / "images"
