@@ -31,3 +31,7 @@
   - 반응형 웹 구현
 * [12주차](./javascript/)
   - 자바스크립트
+* [13~17주차](./Django/)
+  - Django
+* [18주차](https://github.com/uRo3YA/fbi_pjt)
+  - Semi Project(fair)

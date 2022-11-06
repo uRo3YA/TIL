@@ -18,4 +18,4 @@ for tc in range(1,int(input())+1):
                     nxt.add(''.join(s))
                     s[i], s[j] = s[j], s[i]
         now,nxt = nxt,now
-    print(f'#{tc}:',max(map(int,now)))
+    print(f'#{tc}',max(map(int,now)))
