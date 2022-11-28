@@ -35,3 +35,7 @@
   - Django
 * [18주차](https://github.com/uRo3YA/fbi_pjt)
   - Semi Project(fair)
+* [19주차](./)
+  - Semi Project(fair)
+* [20주차](./)
+  - Semi Project(fair)
