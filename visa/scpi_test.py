@@ -1,7 +1,7 @@
 import PySimpleGUI as sg
 import pyvisa as visa
 
-IP_address = '192.168.1.3'
+IP_address = '192.168.110.22'
 
 rm = visa.ResourceManager()
 ds1054z = rm.open_resource('TCPIP::' + IP_address + '::INSTR')
