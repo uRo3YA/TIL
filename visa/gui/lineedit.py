@@ -8,7 +8,10 @@ from PIL import Image, ImageOps
 
 rm = pyvisa.ResourceManager()
 
-
+def con_device(add):
+    inst_1 = rm.open_resource(add) 
+    state=instr.query('*IDN?')
+    return state
 
 
 class Ui_MainWindow(QWidget):
@@ -42,8 +45,13 @@ class Ui_MainWindow(QWidget):
     def con_button_event(self):
         text = self.line_edit.text() # line_edit text 값 가져오기
         add=f"TCPIP::{text}::INSTR"
+        con_msg=con_device(add)
+        try:
+           self.text_label.setText(con_msg)
+        except:
+            self.text_label.setText("COM ERR")
         # inst_1 = rm.open_resource(add)            
-        self.text_label.setText(add) # label에 text 설정하기
+        # self.text_label.setText(add) # label에 text 설정하기
         self.text_label.adjustSize()
 
     # def save_button_event(self):
