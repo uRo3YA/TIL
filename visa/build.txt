@@ -1,1 +1,1 @@
-pyinstaller --onefile teset.py --hidden-import pyvisa-py
+pyinstaller --onefile gui/gui_dev.py --hidden-import pyvisa-py
