@@ -4,10 +4,11 @@ import tkinter.filedialog as fd
 import datetime
 from PIL import Image, ImageOps
 
-rm = pyvisa.ResourceManager()
-inst_1 = rm.open_resource("TCPIP::192.168.110.22::INSTR")
-inst_1.timeout = 10000
+rm = pyvisa.ResourceManager('@py')
+inst_1 = rm.open_resource("TCPIP::192.168.110.14::INSTR")
+inst_1.timeout = 100000 
 print("connect")
+print(inst_1.query('*IDN?'))
 inst_1.write(":MMEM:STOR:SCR 'R:PICTURE.GIF'")
 capture = inst_1.query_binary_values(message=":MMEM:DATA? 'R:PICTURE.GIF'", container=list, datatype='c')
 print("capture")

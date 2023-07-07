@@ -1,12 +1,12 @@
 import sys
+import PyQt5
 from PyQt5.QtWidgets import QLabel, QPushButton, QWidget, QApplication, QLineEdit
 import pyvisa
 import tkinter
 import tkinter.filedialog as fd
 import datetime
 from PIL import Image, ImageOps
-
-
+import os
 
 #rm = pyvisa.ResourceManager()
 class FatalInternalSpectrumanalyzer(EnvironmentError):
@@ -14,8 +14,9 @@ class FatalInternalSpectrumanalyzer(EnvironmentError):
 
 class Spectrumanalyzer:
     def __init__(self):
-        self.rm = pyvisa.ResourceManager()
+        self.rm = pyvisa.ResourceManager('@py')
         self.instr = None
+        
     def safe_close(self):
         if not self.instr is None:
             try:
@@ -54,8 +55,9 @@ class Spectrumanalyzer:
         return not self.instr is None
 
     def screenshot(self):
+        self.instr.timeout = 100000 
         self.instr.write(":MMEM:STOR:SCR 'R:PICTURE.GIF'")
-        capture = self.instr.query_binary_values(message=":MMEM:DATA? 'R:PICTURE.GIF'", container=list, datatype='c')
+        capture = self.query_binary_values(message=":MMEM:DATA? 'R:PICTURE.GIF'", container=list, datatype='c')
         root = tkinter.Tk()
         root.withdraw()
         today = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -122,10 +124,14 @@ class Ui_MainWindow(QWidget):
             self.disconnect()
         else:
             self.sa.device_connect(add)
+            data=self.sa.get_identity()
+            print(data)
             self.text_label.setText(add)
             self.text_label.adjustSize()
 
     def save_button_event(self):
+        data=self.sa.get_identity()
+        print(data)
         self.sa.screenshot()
 
 
