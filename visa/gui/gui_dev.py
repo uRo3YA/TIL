@@ -41,10 +41,11 @@ class Spectrumanalyzer:
         except Exception as ex:
             self.safe_close()
             raise FatalInternalSpectrumanalyzer from ex
+        
     def device_connect(self, resource_string):
         self.safe_close()
         self.instr = self.rm.open_resource(resource_string)
-        self.instr.timeout = 1000
+        self.instr.timeout = 100000
         self.instr.write("*CLS")
         self.instr.write("*IDN?")
     
@@ -54,10 +55,18 @@ class Spectrumanalyzer:
     def is_connected(self):
         return not self.instr is None
 
+    def set_center_frequency(self):
+    # def set_center_frequency(self,cf):
+        self.instr.write("*CLS")
+        self.instr.write(":SENS:FREQ:CENT 3.4e8")
+        # self.instr.write(f":SENS:FREQ:CENT {cf}")
+
+
+
     def screenshot(self):
-        self.instr.timeout = 100000 
+        self.instr.timeout = 100000
         self.instr.write(":MMEM:STOR:SCR 'R:PICTURE.GIF'")
-        capture = self.query_binary_values(message=":MMEM:DATA? 'R:PICTURE.GIF'", container=list, datatype='c')
+        capture = self.instr.query_binary_values(message=":MMEM:DATA? 'R:PICTURE.GIF'", container=list, datatype='c')
         root = tkinter.Tk()
         root.withdraw()
         today = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -68,7 +77,7 @@ class Spectrumanalyzer:
         snapshot=Image.open(filename)
         snapshot.save(filename, 'gif')
         self.instr.write(":MMEM:DEL 'R:PICTURE.GIF'")
-        self.instr.close()
+        self.instr.write("*CLS")
         
 
 # def con_device(add):
@@ -84,56 +93,68 @@ class Ui_MainWindow(QWidget):
         self.sa = Spectrumanalyzer()
 
     def setupUi(self):
-        self.setWindowTitle('LineEdit')
+        self.setWindowTitle('SCREEN SHOT')
         self.resize(1280,720)
 
-        self.line_edit = QLineEdit(self)
-        self.line_edit.move(75,75)
+        self.IP_address_input = QLineEdit(self)
+        self.IP_address_input.move(75,75)
 
-        self.text_label = QLabel(self)
-        self.text_label.move(75, 105)
-        self.text_label.setText('hello. world')
+        self.IP_label = QLabel(self)
+        self.IP_label.move(75, 105)
+        self.IP_label.setText('IP addr:')
 
-        self.con_button = QPushButton(self)
-        self.con_button.move(75, 175)
-        self.con_button.setText('save')
-        self.con_button.clicked.connect(self.save_button_event)
+        self.Device_Label=QLabel(self)
+        self.Device_Label.move(75, 120)
+        self.Device_Label.setText('Device Info:')
 
-        self.save_button = QPushButton(self)
-        self.save_button.move(240, 73)
-        self.save_button.setText('connet')
-        self.save_button.clicked.connect(self.con_button_event)
+        self.Freq_Label=QLabel(self)
+        self.Freq_Label.move(75, 135)
+        self.Freq_Label.setText('Center Freq:')
+        
+        self.Freq_input=QLineEdit(self)
+        self.Freq_input.move(75, 150)
+        
+        self.screenshot_button = QPushButton(self)
+        self.screenshot_button.move(75, 175)
+        self.screenshot_button.setText('screenshot')
+        self.screenshot_button.clicked.connect(self.screenshot_button_event)
+
+        self.connect_button = QPushButton(self)
+        self.connect_button.move(240, 73)
+        self.connect_button.setText('Connect')
+        self.connect_button.clicked.connect(self.connect_button_event)
+
+        self.set_Freq_button = QPushButton(self)
+        self.set_Freq_button.move(240, 148)
+        self.set_Freq_button.setText('set_Freq')
+        self.set_Freq_button.clicked.connect(self.set_Freq_button_event)
+
 
         self.show()
 
-    # def con_button_event(self):
-    #     text = self.line_edit.text() # line_edit text 값 가져오기
-    #     add=f"TCPIP::{text}::INSTR"
-    #     con_msg=con_device(add)
-    #     try:
-    #        self.text_label.setText(con_msg)
-    #     except:
-    #         self.text_label.setText("COM ERR")
-    #     # inst_1 = rm.open_resource(add)            
-    #     # self.text_label.setText(add) # label에 text 설정하기
-    #     self.text_label.adjustSize()
-    def con_button_event(self):
-        text = self.line_edit.text() # line_edit text 값 가져오기
+    def connect_button_event(self):
+        text = self.IP_address_input.text() 
         add=f"TCPIP::{text}::INSTR"
         if self.sa.is_connected():
             self.disconnect()
+            self.connect_button.setText("Connect")
         else:
             self.sa.device_connect(add)
-            data=self.sa.get_identity()
-            print(data)
-            self.text_label.setText(add)
-            self.text_label.adjustSize()
+            device_info=self.sa.get_identity()
+            self.connect_button.setText("Disconnect")
+            self.IP_label.setText("IP addr: "+add)
+            self.IP_label.adjustSize()
+            self.Device_Label.setText("Device Info: "+device_info)
+            self.Device_Label.adjustSize()
 
-    def save_button_event(self):
-        data=self.sa.get_identity()
-        print(data)
+    def screenshot_button_event(self):
         self.sa.screenshot()
 
+    def set_Freq_button_event(self):
+        text = self.Freq_input.text() 
+        self.sa.set_center_frequency(text)
+        self.Freq_Label.setText("Center Freq:"+text)
+        
 
 if __name__=="__main__":
     app = QApplication(sys.argv)
