@@ -32,6 +32,19 @@ class Spectrumanalyzer:
         except Exception as ex:
             self.safe_close()
             raise FatalInternalSpectrumanalyzer from ex
+
+    # def query_binary_values(self):
+    #     try:
+    #         self.instr.write("*CLS")
+    #         result = self.instr.query_binary_values(":WAVeform:DATA?", 
+    #                                         datatype='H', 
+    #                                         is_big_endian=False,
+    #                                         expect_termination=True)
+    #         self.instr.write("*CLS")
+    #         return result
+    #     except Exception as ex:
+    #         self.safe_close()
+    #         raise FatalInternalSpectrumanalyzer from ex
         
     def write(self, command):
         try:
@@ -67,6 +80,7 @@ class Spectrumanalyzer:
         self.instr.timeout = 100000
         self.instr.write(":MMEM:STOR:SCR 'R:PICTURE.GIF'")
         capture = self.instr.query_binary_values(message=":MMEM:DATA? 'R:PICTURE.GIF'", container=list, datatype='c')
+        # capture = self.instr.query_binary_values(message=":MMEM:DATA? 'R:PICTURE.GIF'", container=list, datatype='f',is_big_endian=False, expect_termination=True)
         root = tkinter.Tk()
         root.withdraw()
         today = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -152,7 +166,8 @@ class Ui_MainWindow(QWidget):
 
     def set_Freq_button_event(self):
         text = self.Freq_input.text() 
-        self.sa.set_center_frequency(text)
+        self.sa.set_center_frequency()
+        #self.sa.set_center_frequency(text)
         self.Freq_Label.setText("Center Freq:"+text)
         
 
