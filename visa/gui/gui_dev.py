@@ -79,6 +79,8 @@ class Spectrumanalyzer:
     def screenshot(self):
         self.instr.timeout = 100000
         self.instr.write(":MMEM:STOR:SCR 'R:PICTURE.GIF'")
+        # self.instr.write(":MMEM:DATA? 'R:PICTURE.GIF'")
+        # data = self.instr.read_raw()
         capture = self.instr.query_binary_values(message=":MMEM:DATA? 'R:PICTURE.GIF'", container=list, datatype='c')
         # capture = self.instr.query_binary_values(message=":MMEM:DATA? 'R:PICTURE.GIF'", container=list, datatype='f',is_big_endian=False, expect_termination=True)
         root = tkinter.Tk()
