@@ -57,7 +57,7 @@ class Spectrumanalyzer:
         
     def device_connect(self, resource_string):
         self.safe_close()
-        self.instr = self.rm.open_resource(resource_string)
+        self.instr = self.rm.open_resource(resource_string,chunk_size=8000,timeout=20000)
         self.instr.timeout = 100000
         self.instr.write("*CLS")
         self.instr.write("*IDN?")
@@ -77,12 +77,13 @@ class Spectrumanalyzer:
 
 
     def screenshot(self):
-        self.instr.timeout = 100000
+        # self.instr.timeout = 100000
         self.instr.write(":MMEM:STOR:SCR 'R:PICTURE.GIF'")
         # self.instr.write(":MMEM:DATA? 'R:PICTURE.GIF'")
         # data = self.instr.read_raw()
-        capture = self.instr.query_binary_values(message=":MMEM:DATA? 'R:PICTURE.GIF'", container=list, datatype='c')
-        # capture = self.instr.query_binary_values(message=":MMEM:DATA? 'R:PICTURE.GIF'", container=list, datatype='f',is_big_endian=False, expect_termination=True)
+        #capture = self.instr.query_binary_values(message=":MMEM:DATA? 'R:PICTURE.GIF'", container=list, datatype='c')
+        capture = self.instr.query_binary_values(message=":MMEM:DATA? 'R:PICTURE.GIF'",datatype='B',container=bytearray
+                                                 ,is_big_endian=False, expect_termination=True)
         root = tkinter.Tk()
         root.withdraw()
         today = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
