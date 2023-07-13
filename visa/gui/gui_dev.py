@@ -1,12 +1,16 @@
 import sys
 import PyQt5
 from PyQt5.QtWidgets import QLabel, QPushButton, QWidget, QApplication, QLineEdit
+from PyQt5.QtGui import QPixmap
 import pyvisa
 import tkinter
 import tkinter.filedialog as fd
 import datetime
 from PIL import Image, ImageOps
 import os
+
+global flag
+flag=True
 
 #rm = pyvisa.ResourceManager()
 class FatalInternalSpectrumanalyzer(EnvironmentError):
@@ -95,6 +99,7 @@ class Spectrumanalyzer:
         snapshot.save(filename, 'gif')
         self.instr.write(":MMEM:DEL 'R:PICTURE.GIF'")
         self.instr.write("*CLS")
+        return snapshot
         
 
 # def con_device(add):
@@ -110,6 +115,7 @@ class Ui_MainWindow(QWidget):
         self.sa = Spectrumanalyzer()
 
     def setupUi(self):
+        # default_img=QPixmap('visa\gui\images\default_img.jpg')
         self.setWindowTitle('SCREEN SHOT')
         self.resize(1280,720)
 
@@ -146,6 +152,18 @@ class Ui_MainWindow(QWidget):
         self.set_Freq_button.setText('set_Freq')
         self.set_Freq_button.clicked.connect(self.set_Freq_button_event)
 
+        self.snapshot_label = QLabel(self)
+        # self.snapshot_label.setPixmap(default_img) # 이미지 세팅
+        # self.snapshot_label.setText("HERE")
+        self.snapshot_label.move( 810,360)
+        # self.snapshot_label.setContentsMargins(10, 10, 10, 10)
+        
+
+        # self.img_button=QPushButton(self)
+        # self.img_button.move(810,340)
+        # self.img_button.setText('image change')
+        
+        # self.img_button.clicked.connect(self.img_button_event)
 
         self.show()
 
@@ -165,15 +183,16 @@ class Ui_MainWindow(QWidget):
             self.Device_Label.adjustSize()
 
     def screenshot_button_event(self):
-        self.sa.screenshot()
+        snap_img=self.sa.screenshot()
+        self.snapshot_label.setPixmap(snap_img)
 
     def set_Freq_button_event(self):
         text = self.Freq_input.text() 
         self.sa.set_center_frequency()
         #self.sa.set_center_frequency(text)
         self.Freq_Label.setText("Center Freq:"+text)
-        
-
+   
+  
 if __name__=="__main__":
     app = QApplication(sys.argv)
     ui = Ui_MainWindow()

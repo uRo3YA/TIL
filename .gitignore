@@ -1,3 +1,5 @@
+.gitignore
+visa/C#
 .vscode/
 venv/
 # SECRET_KEY
