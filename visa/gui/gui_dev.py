@@ -92,9 +92,11 @@ class Spectrumanalyzer:
         root.withdraw()
         today = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
         filename = fd.asksaveasfilename(filetypes=[("GIF", ".gif")], initialfile=today, defaultextension="gif")
+        # with open(filename, 'wb') as fp:
+        #     for byte in capture:
+        #         fp.write(byte)
         with open(filename, 'wb') as fp:
-            for byte in capture:
-                fp.write(byte)
+            fp.write(capture)
         snapshot=Image.open(filename)
         snapshot.save(filename, 'gif')
         self.instr.write(":MMEM:DEL 'R:PICTURE.GIF'")
@@ -184,7 +186,7 @@ class Ui_MainWindow(QWidget):
 
     def screenshot_button_event(self):
         snap_img=self.sa.screenshot()
-        self.snapshot_label.setPixmap(snap_img)
+        # self.snapshot_label.setPixmap(snap_img)
 
     def set_Freq_button_event(self):
         text = self.Freq_input.text() 
