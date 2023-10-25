@@ -186,7 +186,8 @@ class Ui_MainWindow(QWidget):
 
     def screenshot_button_event(self):
         snap_img=self.sa.screenshot()
-        # self.snapshot_label.setPixmap(snap_img)
+        self.snapshot_label.setMovie(snap_img)
+        
 
     def set_Freq_button_event(self):
         text = self.Freq_input.text() 
