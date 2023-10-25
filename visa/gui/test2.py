@@ -1,150 +1,204 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QLineEdit, QLabel, QFileDialog, QHBoxLayout, QFormLayout, QGroupBox, QGridLayout, QTextEdit, QScrollArea
+import PyQt5
+from PyQt5.QtWidgets import QLabel, QPushButton, QWidget, QApplication, QLineEdit
 from PyQt5.QtGui import QPixmap
-import pyvisa as visa
+import pyvisa
+import tkinter
+import tkinter.filedialog as fd
+import datetime
+from PIL import Image, ImageOps
+import os
+import qdarkstyle
+global flag
+flag=True
 
-class SpectrumAnalyzerGUI(QWidget):
+#rm = pyvisa.ResourceManager()
+class FatalInternalSpectrumanalyzer(EnvironmentError):
+    pass
+
+class Spectrumanalyzer:
+    def __init__(self):
+        self.rm = pyvisa.ResourceManager('@py')
+        self.instr = None
+        
+    def safe_close(self):
+        if not self.instr is None:
+            try:
+                self.instr.close()
+            finally:
+                self.instr = None
+    def query(self, command):
+        try:
+            self.instr.write("*CLS")
+            result = self.instr.query(command)[:-1]
+            self.instr.write("*CLS")
+            return result
+        except Exception as ex:
+            self.safe_close()
+            raise FatalInternalSpectrumanalyzer from ex
+
+    # def query_binary_values(self):
+    #     try:
+    #         self.instr.write("*CLS")
+    #         result = self.instr.query_binary_values(":WAVeform:DATA?", 
+    #                                         datatype='H', 
+    #                                         is_big_endian=False,
+    #                                         expect_termination=True)
+    #         self.instr.write("*CLS")
+    #         return result
+    #     except Exception as ex:
+    #         self.safe_close()
+    #         raise FatalInternalSpectrumanalyzer from ex
+        
+    def write(self, command):
+        try:
+            self.instr.write("*CLS")
+            self.instr.write(command)
+            self.instr.write("*CLS")
+        except Exception as ex:
+            self.safe_close()
+            raise FatalInternalSpectrumanalyzer from ex
+        
+    def device_connect(self, resource_string):
+        self.safe_close()
+        self.instr = self.rm.open_resource(resource_string,chunk_size=8000,timeout=20000)
+        self.instr.timeout = 100000
+        self.instr.write("*CLS")
+        self.instr.write("*IDN?")
+    
+    def get_identity(self):
+        return self.query("*IDN?")
+
+    def is_connected(self):
+        return not self.instr is None
+
+    def set_center_frequency(self):
+    # def set_center_frequency(self,cf):
+        self.instr.write("*CLS")
+        self.instr.write(":SENS:FREQ:CENT 3.4e8")
+        # self.instr.write(f":SENS:FREQ:CENT {cf}")
+
+
+
+    def screenshot(self):
+        # self.instr.timeout = 100000
+        self.instr.write(":MMEM:STOR:SCR 'R:PICTURE.GIF'")
+        # self.instr.write(":MMEM:DATA? 'R:PICTURE.GIF'")
+        # data = self.instr.read_raw()
+        #capture = self.instr.query_binary_values(message=":MMEM:DATA? 'R:PICTURE.GIF'", container=list, datatype='c')
+        capture = self.instr.query_binary_values(message=":MMEM:DATA? 'R:PICTURE.GIF'",datatype='B',container=bytearray
+                                                 ,is_big_endian=False, expect_termination=True)
+        root = tkinter.Tk()
+        root.withdraw()
+        today = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = fd.asksaveasfilename(filetypes=[("GIF", ".gif")], initialfile=today, defaultextension="gif")
+        # with open(filename, 'wb') as fp:
+        #     for byte in capture:
+        #         fp.write(byte)
+        with open(filename, 'wb') as fp:
+            fp.write(capture)
+        snapshot=Image.open(filename)
+        snapshot.save(filename, 'gif')
+        self.instr.write(":MMEM:DEL 'R:PICTURE.GIF'")
+        self.instr.write("*CLS")
+        return snapshot
+        
+
+# def con_device(add):
+#     inst_1 = rm.open_resource(add) 
+#     state=inst_1.query('*IDN?')
+#     return state
+
+
+class Ui_MainWindow(QWidget):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle('Keysight Spectrum Analyzer Control')
-        self.setGeometry(100, 100, 1000, 600)
+        self.setupUi()
+        self.sa = Spectrumanalyzer()
 
-        layout = QGridLayout()
+    def setupUi(self):
+        # default_img=QPixmap('visa\gui\images\default_img.jpg')
+        self.setWindowTitle('SCREEN SHOT')
+        self.resize(1280,720)
 
-        # Input box for TCP/IP connection
-        self.ip_address_label = QLabel('Enter Spectrum Analyzer IP Address:')
-        self.ip_address_input = QLineEdit(self)
-        self.ip_address_input.setPlaceholderText('e.g., 192.168.1.100')
-        layout.addWidget(self.ip_address_label, 0, 0)
-        layout.addWidget(self.ip_address_input, 0, 1)
+        self.IP_address_input = QLineEdit(self)
+        self.IP_address_input.move(75,75)
 
-        # Connect button
-        self.connect_button = QPushButton('Connect', self)
-        self.connect_button.clicked.connect(self.connect_to_analyzer)
-        layout.addWidget(self.connect_button, 0, 2)
+        self.IP_label = QLabel(self)
+        self.IP_label.move(75, 105)
+        self.IP_label.setText('IP addr:')
 
-        # Screenshot display area
-        self.screenshot_label = QLabel(self)
-        self.screenshot_label.setMinimumSize(400, 300)
-        layout.addWidget(self.screenshot_label, 1, 0, 3, 1)
+        self.Device_Label=QLabel(self)
+        self.Device_Label.move(75, 120)
+        self.Device_Label.setText('Device Info:')
 
-        # Create a group box for the marker settings
-        marker_group_box = QGroupBox('Marker Settings')
-        marker_layout = QFormLayout()
-
-        # Center frequency input box
-        self.center_frequency_input = QLineEdit(self)
-        self.center_frequency_input.setPlaceholderText('Enter Center Frequency (Hz)')
-        marker_layout.addRow('Center Frequency:', self.center_frequency_input)
-
-        # Set Marker button
-        self.marker_button = QPushButton('Set Marker', self)
-        self.marker_button.clicked.connect(self.set_marker)
-        marker_layout.addWidget(self.marker_button)
-
-        # Frequency offset input box
-        self.offset_input = QLineEdit(self)
-        self.offset_input.setPlaceholderText('Enter Frequency Offset (Hz)')
-        marker_layout.addRow('Frequency Offset:', self.offset_input)
-
-        # Span input box
-        self.span_input = QLineEdit(self)
-        self.span_input.setPlaceholderText('Enter Span (Hz)')
-        marker_layout.addRow('Span:', self.span_input)
-
-        # Set Delta Marker button
-        self.delta_marker_button = QPushButton('Set Delta Marker', self)
-        self.delta_marker_button.clicked.connect(self.set_delta_marker)
-        layout.addWidget(self.delta_marker_button, 1, 2)
-
-        # Add marker layout to the marker group box
-        marker_group_box.setLayout(marker_layout)
-        layout.addWidget(marker_group_box, 1, 1)
-
-        # Capture Screenshot button
-        self.image_button = QPushButton('Capture Screenshot', self)
-        self.image_button.clicked.connect(self.save_screenshot)
-        layout.addWidget(self.image_button, 4, 0, 1, 3)
-
-        # Log area
-        self.log_text_edit = QTextEdit(self)
-        self.log_text_edit.setReadOnly(True)
-        scroll_area = QScrollArea(self)
-        scroll_area.setWidget(self.log_text_edit)
-        scroll_area.setWidgetResizable(True)
-        layout.addWidget(scroll_area, 5, 0, 1, 3)
-
-        self.setLayout(layout)
-
-        self.spectrum_analyzer = None
-
-    def connect_to_analyzer(self):
-        try:
-            rm = visa.ResourceManager()
-            ip_address = self.ip_address_input.text()
-            self.spectrum_analyzer = rm.open_resource(f'TCPIP::{ip_address}::INSTR')
-            self.log('Connected to the Spectrum Analyzer.')
-        except visa.VisaIOError as e:
-            self.log(f"Error connecting to the Spectrum Analyzer: {e}")
-            self.spectrum_analyzer = None
-
-    def log(self, message):
-        self.log_text_edit.append(message)
-
-    def save_screenshot(self):
-        if self.spectrum_analyzer:
-            file_path, _ = QFileDialog.getSaveFileName(self, 'Save Screenshot', '', 'PNG Images (*.png);;All Files (*)')
-            if file_path:
-                screenshot_data = self.spectrum_analyzer.query_binary_values(':DISP:DATA:SDAT?', datatype='B', container=bytes)
-                with open(file_path, 'wb') as file:
-                    file.write(screenshot_data)
-                self.log(f"Screenshot saved to {file_path}")
-                pixmap = QPixmap(file_path)
-                self.screenshot_label.setPixmap(pixmap.scaled(400, 300))
-
-    def set_marker(self):
-        if self.spectrum_analyzer:
-            try:
-                frequency = float(self.center_frequency_input.text())
-                marker_value = self._set_marker(frequency)
-                if marker_value is not None:
-                    self.log(f"Marker frequency: {frequency} Hz, Amplitude: {marker_value} dBm")
-            except ValueError:
-                self.log("Invalid input for center frequency.")
+        self.Freq_Label=QLabel(self)
+        self.Freq_Label.move(75, 135)
+        self.Freq_Label.setText('Center Freq:')
         
-    def _set_marker(self, frequency):
-        try:
-            self.spectrum_analyzer.write(f':CALCulate:MARKer:X {frequency}Hz')
-            marker_value = self.spectrum_analyzer.query(':CALCulate:MARKer:Y?')
-            return float(marker_value)
-        except visa.VisaIOError as e:
-            self.log(f"Error setting marker: {e}")
-            return None
-
-    def set_delta_marker(self):
-        if self.spectrum_analyzer:
-            try:
-                center_frequency = float(self.center_frequency_input.text())
-                offset = float(self.offset_input.text())
-                span = float(self.span_input.text())
-                marker_value = self._set_delta_marker(center_frequency, offset)
-                if marker_value is not None:
-                    self.log(f"Delta Marker at Frequency: {center_frequency + offset} Hz, Amplitude: {marker_value} dBm")
-            except ValueError:
-                self.log("Invalid input for center frequency, offset, or span.")
+        self.Freq_input=QLineEdit(self)
+        self.Freq_input.move(75, 150)
         
-    def _set_delta_marker(self, center_frequency, offset):
-        try:
-            self.spectrum_analyzer.write(f':FREQuency:CENTer {center_frequency}Hz')
-            self.spectrum_analyzer.write(f':DISP:WIND:TRAC:X:OFFS {offset}Hz')
-            marker_value = self.spectrum_analyzer.query(':CALCulate:MARKer:Y?')
-            return float(marker_value)
-        except visa.VisaIOError as e:
-            self.log(f"Error setting delta marker: {e}")
-            return None
+        self.screenshot_button = QPushButton(self)
+        self.screenshot_button.move(75, 175)
+        self.screenshot_button.setText('screenshot')
+        self.screenshot_button.clicked.connect(self.screenshot_button_event)
 
-if __name__ == '__main__':
+        self.connect_button = QPushButton(self)
+        self.connect_button.move(240, 73)
+        self.connect_button.setText('Connect')
+        self.connect_button.clicked.connect(self.connect_button_event)
+
+        self.set_Freq_button = QPushButton(self)
+        self.set_Freq_button.move(240, 148)
+        self.set_Freq_button.setText('set_Freq')
+        self.set_Freq_button.clicked.connect(self.set_Freq_button_event)
+
+        self.snapshot_label = QLabel(self)
+        # self.snapshot_label.setPixmap(default_img) # 이미지 세팅
+        # self.snapshot_label.setText("HERE")
+        self.snapshot_label.move( 810,360)
+        # self.snapshot_label.setContentsMargins(10, 10, 10, 10)
+        
+
+        # self.img_button=QPushButton(self)
+        # self.img_button.move(810,340)
+        # self.img_button.setText('image change')
+        
+        # self.img_button.clicked.connect(self.img_button_event)
+
+        self.show()
+
+    def connect_button_event(self):
+        text = self.IP_address_input.text() 
+        add=f"TCPIP::{text}::INSTR"
+        if self.sa.is_connected():
+            self.disconnect()
+            self.connect_button.setText("Connect")
+        else:
+            self.sa.device_connect(add)
+            device_info=self.sa.get_identity()
+            self.connect_button.setText("Disconnect")
+            self.IP_label.setText("IP addr: "+add)
+            self.IP_label.adjustSize()
+            self.Device_Label.setText("Device Info: "+device_info)
+            self.Device_Label.adjustSize()
+
+    def screenshot_button_event(self):
+        snap_img=self.sa.screenshot()
+        # self.snapshot_label.setPixmap(snap_img)
+
+    def set_Freq_button_event(self):
+        text = self.Freq_input.text() 
+        self.sa.set_center_frequency()
+        #self.sa.set_center_frequency(text)
+        self.Freq_Label.setText("Center Freq:"+text)
+   
+  
+if __name__=="__main__":
     app = QApplication(sys.argv)
-    window = SpectrumAnalyzerGUI()
-    window.show()
+    
+    app.setStyleSheet(qdarkstyle.load_stylesheet(qt_api='pyqt5'))
+    ui = Ui_MainWindow()
+    ui.show()
     sys.exit(app.exec_())
