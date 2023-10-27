@@ -1,3 +1,28 @@
+# import pyvisa
+
+# _host = '169.254.52.212'
+# _port = 5000
+
+# rm = pyvisa.ResourceManager('@py') # visa 객체를 생성합니다.
+# print(rm.list_resources())
+# # 지정한 HOST와 PORT를 사용하여 계측기에 접속합니다. 
+# pna_client = rm.open_resource("TCPIP::192.168.110.22::INSTR")
+
+# print (pna_client.query('*IDN?')) # 계측기 정보를 출력합니다.
+
+# pna_client.write(f"HCOPy:SDUMp:DATA:FORMat PNG") # screenshot file format : PNG
+# pna_client.write('HCOPy:SDUMp:DATA?') # PNA screenshot
+# img = pna_client.read_raw() # 캡쳐된 바이너리 이미지 데이터 받기
+
+# header_index = img.find(b'\x89PNG')
+# if (header_index > 0): # find PNG header
+#     img = img[header_index:]
+
+# # 화면 캡쳐 파일 저장하기
+# with open('pna.png', 'wb') as f:
+#     f.write(img)
+# pna_client.close()
+# rm.close()
 import sys
 import PyQt5
 from PyQt5.QtWidgets import QLabel, QPushButton, QWidget, QApplication, QLineEdit
@@ -23,14 +48,15 @@ def suppress_qt_warning():
 
 
 #rm = pyvisa.ResourceManager()
-class FatalInternalSpectrumanalyzer(EnvironmentError):
+class FatalInternalPNA(EnvironmentError):
     pass
 
-class Spectrumanalyzer:
+class PNA:
     def __init__(self):
         self.rm = pyvisa.ResourceManager('@py')
         self.instr = None
-        
+        resources = self.rm.list_resources('?*')
+        print(resources)
     def safe_close(self):
         if not self.instr is None:
             try:
@@ -45,21 +71,8 @@ class Spectrumanalyzer:
             return result
         except Exception as ex:
             self.safe_close()
-            raise FatalInternalSpectrumanalyzer from ex
-
-    # def query_binary_values(self):
-    #     try:
-    #         self.instr.write("*CLS")
-    #         result = self.instr.query_binary_values(":WAVeform:DATA?", 
-    #                                         datatype='H', 
-    #                                         is_big_endian=False,
-    #                                         expect_termination=True)
-    #         self.instr.write("*CLS")
-    #         return result
-    #     except Exception as ex:
-    #         self.safe_close()
-    #         raise FatalInternalSpectrumanalyzer from ex
-        
+            raise FatalInternalPNA from ex
+       
     def write(self, command):
         try:
             self.instr.write("*CLS")
@@ -67,7 +80,7 @@ class Spectrumanalyzer:
             self.instr.write("*CLS")
         except Exception as ex:
             self.safe_close()
-            raise FatalInternalSpectrumanalyzer from ex
+            raise FatalInternalPNA from ex
         
     def device_connect(self, resource_string):
         self.safe_close()
@@ -82,60 +95,32 @@ class Spectrumanalyzer:
     def is_connected(self):
         return not self.instr is None
 
-    def set_center_frequency(self,text):
-    # def set_center_frequency(self,cf):
-        self.instr.write("*CLS")
-        self.instr.write(f":SENS:FREQ:CENT {text}")
-        # self.instr.write(f":SENS:FREQ:CENT {cf}")
-    def marker_search(self):
-        self.instr.write("CALC:MARK ON")  
-        self.instr.write("CALC:MARK:CNET")
-        self.instr.write("CALC:MARK:MAX")
-        self.instr.write("CALC:MARK:Y?")
-        amp_dbm = float(self.instr.read())
-        print(amp_dbm)
-        return amp_dbm
-        
-
-
     def screenshot(self):
-        # self.instr.timeout = 100000
-        self.instr.write(":MMEM:STOR:SCR 'R:PICTURE.GIF'")
-        # self.instr.write(":MMEM:DATA? 'R:PICTURE.GIF'")
-        # data = self.instr.read_raw()
-        #capture = self.instr.query_binary_values(message=":MMEM:DATA? 'R:PICTURE.GIF'", container=list, datatype='c')
-        capture = self.instr.query_binary_values(message=":MMEM:DATA? 'R:PICTURE.GIF'",datatype='B',container=bytearray
-                                                 ,is_big_endian=False, expect_termination=True)
+        self.instr.write(f"HCOPy:SDUMp:DATA:FORMat PNG") # screenshot file format : PNG
+        self.instr.write('HCOPy:SDUMp:DATA?') # PNA screenshot
+        img = self.instr.read_raw() # 캡쳐된 바이너리 이미지 데이터 받기
+
         root = tkinter.Tk()
         root.withdraw()
         today = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-        filename = fd.asksaveasfilename(filetypes=[("GIF", ".gif")], initialfile=today, defaultextension="gif")
-        print(filename)
-        # with open(filename, 'wb') as fp:
-        #     for byte in capture:
-        #         fp.write(byte)
-        with open(filename, 'wb') as fp:
-            fp.write(capture)
-        snapshot=Image.open(filename)
-        snapshot.save(filename, 'gif')
-        jpg_snapshot=snapshot.convert('RGBA')
-        self.instr.write(":MMEM:DEL 'R:PICTURE.GIF'")
-        self.instr.write("*CLS")
-        
-        return capture
-        
+        filename = fd.asksaveasfilename(filetypes=[("PNG", ".png")], initialfile=today, defaultextension="png")
 
-# def con_device(add):
-#     inst_1 = rm.open_resource(add) 
-#     state=inst_1.query('*IDN?')
-#     return state
+        header_index = img.find(b'\x89PNG')
+        if (header_index > 0): # find PNG header
+            img = img[header_index:]
+        # 화면 캡쳐 파일 저장하기
+        with open(filename, 'wb') as f:
+            f.write(img)
+    
+        print(filename)
+
 
 
 class Ui_MainWindow(QWidget):
     def __init__(self):
         super().__init__()
         self.setupUi()
-        self.sa = Spectrumanalyzer()
+        self.sa = PNA()
 
     def setupUi(self):
         
@@ -154,12 +139,12 @@ class Ui_MainWindow(QWidget):
         self.Device_Label.move(75, 120)
         self.Device_Label.setText('Device Info:')
 
-        self.Freq_Label=QLabel(self)
-        self.Freq_Label.move(75, 135)
-        self.Freq_Label.setText('Center Freq:')
+        # self.Freq_Label=QLabel(self)
+        # self.Freq_Label.move(75, 135)
+        # self.Freq_Label.setText('Center Freq:')
         
-        self.Freq_input=QLineEdit(self)
-        self.Freq_input.move(75, 150)
+        # self.Freq_input=QLineEdit(self)
+        # self.Freq_input.move(75, 150)
         
         self.screenshot_button = QPushButton(self)
         self.screenshot_button.move(75, 175)
@@ -171,21 +156,21 @@ class Ui_MainWindow(QWidget):
         self.connect_button.setText('Connect')
         self.connect_button.clicked.connect(self.connect_button_event)
 
-        self.set_Freq_button = QPushButton(self)
-        self.set_Freq_button.move(240, 155)
-        self.set_Freq_button.setText('set_Freq')
-        self.set_Freq_button.clicked.connect(self.set_Freq_button_event)
+        # self.set_Freq_button = QPushButton(self)
+        # self.set_Freq_button.move(240, 155)
+        # self.set_Freq_button.setText('set_Freq')
+        # self.set_Freq_button.clicked.connect(self.set_Freq_button_event)
 
         self.snapshot_label = QLabel(self)
         #self.snapshot_label.setPixmap(default_img) # 이미지 세팅
         # self.snapshot_label.setText("HERE")
         self.snapshot_label.move(810,360)
-        # self.snapshot_label.setContentsMargins(10, 10, 10, 10)
-        self.marker_button = QPushButton(self)
-        # self.marker_label=QLabel(self)
-        self.marker_button.move(240, 175)
-        self.marker_button.setText('Marker')
-        self.marker_button.clicked.connect(self.marker_button_event)
+        # # self.snapshot_label.setContentsMargins(10, 10, 10, 10)
+        # self.marker_button = QPushButton(self)
+        # # self.marker_label=QLabel(self)
+        # self.marker_button.move(240, 175)
+        # self.marker_button.setText('Marker')
+        # self.marker_button.clicked.connect(self.marker_button_event)
        
         # self.img_button=QPushButton(self)
         # self.img_button.move(810,340)
@@ -205,6 +190,7 @@ class Ui_MainWindow(QWidget):
             self.sa.device_connect(add)
             device_info=self.sa.get_identity()
             self.connect_button.setText("Disconnect")
+            self.connect_button.adjustSize()
             self.IP_label.setText("IP addr: "+add)
             self.IP_label.adjustSize()
             self.Device_Label.setText("Device Info: "+device_info)

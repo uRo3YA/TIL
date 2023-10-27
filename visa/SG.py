@@ -5,7 +5,7 @@ import time
 rm = visa.ResourceManager()
  
 # open the resource using the VISA address from Keysight Connection Expert
-SGC = rm.open_resource('TCPIP::192.168.110.25::INSTR') 
+SGC = rm.open_resource('TCPIP::169.254.52.212::INSTR') 
  
 # request the instrument to identify itself
 modelSerialnumber = SGC.query('*IDN?')
