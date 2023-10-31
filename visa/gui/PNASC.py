@@ -75,12 +75,13 @@ class PNA:
     
         print(filename)
 
+  
 
 
 class MyGUI(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("PNA screen capture")
+        self.setWindowTitle("PNA capture")
         self.setGeometry(100, 100, 400, 300)
         self.init_ui()
         self.sa = PNA()
@@ -92,21 +93,22 @@ class MyGUI(QMainWindow):
         layout = QVBoxLayout(central_widget)
         group_box1 = QGroupBox("Group 1")
         layout.addWidget(group_box1)
-        IP_address_input = QLineEdit()
-        button1_3 = QPushButton("연결")
+        self.IP_address_input = QLineEdit()
+        self.button1_3 = QPushButton("연결")
+        self.button1_3.clicked.connect(self.connect_button_event)
         group_layout1 = QVBoxLayout()
         layout1_3 = QHBoxLayout()
-        layout1_3.addWidget(IP_address_input)
-        layout1_3.addWidget(button1_3)
+        layout1_3.addWidget(self.IP_address_input)
+        layout1_3.addWidget(self.button1_3)
         layout1_4 = QHBoxLayout()
-        IP_label = QLabel(self)
-        IP_label.setText('연결 정보:')
-        layout1_4.addWidget(IP_label)
+        self.IP_label = QLabel(self)
+        self.IP_label.setText('연결 정보:')
+        layout1_4.addWidget(self.IP_label)
 
         layout1_5 = QHBoxLayout()
-        Device_Label = QLabel(self)
-        Device_Label.setText('기기 정보:')
-        layout1_5.addWidget(Device_Label)
+        self.Device_Label = QLabel(self)
+        self.Device_Label.setText('기기 정보:')
+        layout1_5.addWidget(self.Device_Label)
         group_layout1.addLayout(layout1_3)
         group_layout1.addLayout(layout1_4)
         group_layout1.addLayout(layout1_5)
@@ -116,10 +118,11 @@ class MyGUI(QMainWindow):
         group_box2 = QGroupBox("Group 2")
         layout.addWidget(group_box2)
 
-        button2_1 = QPushButton("이미지 저장")
-
+        self.button2_1 = QPushButton("이미지 저장")
+        self.button2_1.clicked.connect(self.screenshot_button_event) 
+        
         group_layout2 = QVBoxLayout()
-        group_layout2.addWidget(button2_1)
+        group_layout2.addWidget(self.button2_1)
         group_box2.setLayout(group_layout2)
 
 
@@ -137,6 +140,36 @@ class MyGUI(QMainWindow):
         group_layout3 = QVBoxLayout()
         group_layout3.addWidget(label)
         group_box3.setLayout(group_layout3)
+
+    def connect_button_event(self):
+        text = self.IP_address_input.text() 
+        add=f"TCPIP::{text}::INSTR"
+        if self.sa.is_connected():
+            self.disconnect()
+            self.button1_3.setText("Connect")
+        else:
+            self.sa.device_connect(add)
+            device_info=self.sa.get_identity()
+            self.button1_3.setText("Disconnect")
+            self.button1_3.adjustSize()
+            self.IP_label.setText("연결 정보: "+add)
+            self.IP_label.adjustSize()
+            self.Device_Label.setText("기기 정보: "+device_info)
+            self.Device_Label.adjustSize()  
+    
+    def screenshot_button_event(self):
+        snap_img=self.sa.screenshot()
+        # pixmap = PQ.toqpixmap(snap_img)
+        print(type(snap_img))
+        qp = QPixmap()
+        qp.loadFromData(snap_img)
+
+    #     image = QPixmap(f'{snap_img}')
+        
+    #     # pixmap = QPixmap(image)    
+    #     # print(type(snap_img))
+        
+        self.snapshot_label.setPixmap(qp)
 
     def create_arrow_image(self, width, height):
         pixmap = QPixmap(width, height)
