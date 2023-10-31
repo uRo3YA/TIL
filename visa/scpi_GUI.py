@@ -42,8 +42,8 @@ flag=True
 def suppress_qt_warning():
     environ["QT_DEVICE_PIXEL_RATIO"]="0"
     environ["QT_AUTO_SCREEN_SCALE_FACTOR"]="1"
-    environ["QT_SCREEN_SCALE_FACTORS"]="1"
-    environ["QT_SCALE_FACTOR"]="1"
+    # environ["QT_SCREEN_SCALE_FACTORS"]="1"
+    # environ["QT_SCALE_FACTOR"]="1"
 
 
 
@@ -126,7 +126,7 @@ class Ui_MainWindow(QWidget):
         
         #default_img=QPixmap('C:/Users/PC/Desktop/20231026_102158.gif')
         self.setWindowTitle('SCREEN SHOT')
-        self.resize(1280,720)
+        self.resize(640,480)
 
         self.IP_address_input = QLineEdit(self)
         self.IP_address_input.move(75,75)
