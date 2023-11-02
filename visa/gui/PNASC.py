@@ -6,8 +6,8 @@ import datetime
 
 from PyQt5.QtWidgets import QApplication, QMainWindow, QGroupBox, QPushButton, QHBoxLayout, QWidget, QLineEdit, QVBoxLayout
 from PyQt5.QtWidgets import QApplication, QMainWindow, QGroupBox, QVBoxLayout, QWidget, QLabel
-from PyQt5.QtGui import QPixmap, QPainter, QPen, QBrush
-from PyQt5.QtCore import Qt, QPoint
+from PyQt5.QtGui import QPixmap
+from PyQt5.QtCore import Qt
 
 class FatalInternalPNA(EnvironmentError):
     pass
@@ -73,7 +73,7 @@ class PNA:
         with open(filename, 'wb') as f:
             f.write(img)
     
-        print(filename)
+        return filename
 
   
 
@@ -88,6 +88,7 @@ class MyGUI(QMainWindow):
 
     def init_ui(self):
         central_widget = QWidget()
+        # pixmap = QPixmap('resource/20231027_141832.png')  
         self.setCentralWidget(central_widget)
 
         layout = QVBoxLayout(central_widget)
@@ -120,7 +121,7 @@ class MyGUI(QMainWindow):
 
         self.button2_1 = QPushButton("이미지 저장")
         self.button2_1.clicked.connect(self.screenshot_button_event) 
-        
+
         group_layout2 = QVBoxLayout()
         group_layout2.addWidget(self.button2_1)
         group_box2.setLayout(group_layout2)
@@ -131,14 +132,14 @@ class MyGUI(QMainWindow):
         layout.addWidget(group_box3)
 
         # Create a QPixmap with an arrow image
-        pixmap = self.create_arrow_image(120, 120)
+        # pixmap = self.create_arrow_image(120, 120)
 
-        label = QLabel()
-        label.setPixmap(pixmap)
-        label.setAlignment(Qt.AlignCenter)
+        # self.snaplabel = QLabel()
+        # self.snaplabel.setPixmap(pixmap)
+        # self.snaplabel.setAlignment(Qt.AlignCenter)
         
         group_layout3 = QVBoxLayout()
-        group_layout3.addWidget(label)
+        # group_layout3.addWidget(self.snaplabel)
         group_box3.setLayout(group_layout3)
 
     def connect_button_event(self):
@@ -159,40 +160,40 @@ class MyGUI(QMainWindow):
     
     def screenshot_button_event(self):
         snap_img=self.sa.screenshot()
-        # pixmap = PQ.toqpixmap(snap_img)
-        print(type(snap_img))
-        qp = QPixmap()
-        qp.loadFromData(snap_img)
+        # # print(type(snap_img))
+        # qp = QPixmap(f'{snap_img}')
+        # self.snaplabel.setPixmap(qp)
+    #     qp.loadFromData(snap_img)
 
-    #     image = QPixmap(f'{snap_img}')
+    # #     image = QPixmap(f'{snap_img}')
         
-    #     # pixmap = QPixmap(image)    
-    #     # print(type(snap_img))
+    # #     # pixmap = QPixmap(image)    
+    # #     # print(type(snap_img))
         
-        self.snapshot_label.setPixmap(qp)
+    #     self.snapshot_label.setPixmap(qp)
 
-    def create_arrow_image(self, width, height):
-        pixmap = QPixmap(width, height)
-        pixmap.fill(Qt.white)
-        painter = QPainter(pixmap)
-        pen = QPen(Qt.black, 2, Qt.SolidLine)
-        painter.setPen(pen)
+    # def create_arrow_image(self, width, height):
+    #     pixmap = QPixmap(width, height)
+    #     pixmap.fill(Qt.white)
+    #     painter = QPainter(pixmap)
+    #     pen = QPen(Qt.black, 2, Qt.SolidLine)
+    #     painter.setPen(pen)
 
-        # Draw a simple arrow
-        arrow_width = 20
-        arrow_height = 40
-        top_point = QPoint(width // 2, 10)
-        bottom_point = QPoint(width // 2, height - 10)
-        left_point = QPoint(width // 2 - arrow_width // 2, height - 10 - arrow_height)
-        right_point = QPoint(width // 2 + arrow_width // 2, height - 10 - arrow_height)
+    #     # Draw a simple arrow
+    #     arrow_width = 20
+    #     arrow_height = 40
+    #     top_point = QPoint(width // 2, 10)
+    #     bottom_point = QPoint(width // 2, height - 10)
+    #     left_point = QPoint(width // 2 - arrow_width // 2, height - 10 - arrow_height)
+    #     right_point = QPoint(width // 2 + arrow_width // 2, height - 10 - arrow_height)
 
-        # Draw arrow lines
-        painter.drawLine(top_point, bottom_point)
-        painter.drawLine(left_point, bottom_point)
-        painter.drawLine(right_point, bottom_point)
+    #     # Draw arrow lines
+    #     painter.drawLine(top_point, bottom_point)
+    #     painter.drawLine(left_point, bottom_point)
+    #     painter.drawLine(right_point, bottom_point)
 
-        painter.end()
-        return pixmap
+    #     painter.end()
+    #     return pixmap
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
