@@ -1,12 +1,7 @@
 import sys
 import PyQt5
-<<<<<<< HEAD
 from PyQt5.QtWidgets import QLabel, QPushButton, QWidget, QApplication, QLineEdit,QVBoxLayout,QGroupBox
 from PyQt5.QtGui import QPixmap
-=======
-from PyQt5.QtWidgets import QLabel, QPushButton, QWidget, QApplication, QLineEdit
-from PyQt5.QtGui import QPixmap, QMovie
->>>>>>> 7cb8747399a07aadf54d23696a1854169d4de281
 import pyvisa
 import tkinter
 import tkinter.filedialog as fd
@@ -145,13 +140,8 @@ class Ui_MainWindow(QWidget):
         self.sa = Spectrumanalyzer()
 
     def setupUi(self):
-<<<<<<< HEAD
         # default_img=QPixmap('visa\gui\images\default_img.jpg')
         
-=======
-        
-        #default_img=QPixmap('C:/Users/PC/Desktop/20231026_102158.gif')
->>>>>>> 7cb8747399a07aadf54d23696a1854169d4de281
         self.setWindowTitle('SCREEN SHOT')
         self.resize(960,540)
 
