@@ -1,6 +1,6 @@
 import sys
 import PyQt5
-from PyQt5.QtWidgets import QLabel, QPushButton, QWidget, QApplication, QLineEdit
+from PyQt5.QtWidgets import QLabel, QPushButton, QWidget, QApplication, QLineEdit,QVBoxLayout,QGroupBox
 from PyQt5.QtGui import QPixmap
 import pyvisa
 import tkinter
@@ -118,15 +118,22 @@ class Ui_MainWindow(QWidget):
 
     def setupUi(self):
         # default_img=QPixmap('visa\gui\images\default_img.jpg')
+        
         self.setWindowTitle('SCREEN SHOT')
         self.resize(1280,720)
 
+        main_layout = QVBoxLayout()
+        groupbox_1 = QGroupBox("group_1")
+        layout_1 = QVBoxLayout()
+        
         self.IP_address_input = QLineEdit(self)
         self.IP_address_input.move(75,75)
 
         self.IP_label = QLabel(self)
         self.IP_label.move(75, 105)
         self.IP_label.setText('IP addr:')
+        layout_1.addWidget(self.IP_address_input)
+        layout_1.addWidget(self.IP_label)
 
         self.Device_Label=QLabel(self)
         self.Device_Label.move(75, 120)
@@ -166,7 +173,6 @@ class Ui_MainWindow(QWidget):
         # self.img_button.setText('image change')
         
         # self.img_button.clicked.connect(self.img_button_event)
-
         self.show()
 
     def connect_button_event(self):
