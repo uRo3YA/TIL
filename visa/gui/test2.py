@@ -15,7 +15,7 @@ global flag
 flag=True
 
 def suppress_qt_warning():
-    environ["QT_DEVICE_PIXEL_RATIO"]="0"
+    environ["QT_DEVICE_PIXEL_RATIO"]="1"
     environ["QT_AUTO_SCREEN_SCALE_FACTOR"]="1"
     environ["QT_SCREEN_SCALE_FACTORS"]="1"
     environ["QT_SCALE_FACTOR"]="1"
@@ -104,25 +104,27 @@ class Spectrumanalyzer:
         # self.instr.write(":MMEM:DATA? 'R:PICTURE.GIF'")
         # data = self.instr.read_raw()
         #capture = self.instr.query_binary_values(message=":MMEM:DATA? 'R:PICTURE.GIF'", container=list, datatype='c')
-        capture = self.instr.query_binary_values(message=":MMEM:DATA? 'R:PICTURE.GIF'",datatype='B',container=bytearray
-                                                 ,is_big_endian=False, expect_termination=True)
-        root = tkinter.Tk()
-        root.withdraw()
+        # capture = self.instr.query_binary_values(message=":MMEM:DATA? 'R:PICTURE.GIF'",datatype='B',container=bytearray,is_big_endian=False, expect_termination=True)
+        capture = self.instr.query_binary_values(message=":MMEM:DATA? 'R:PICTURE.GIF'",datatype='B',container=bytearray)
+        
+        # root = tkinter.Tk()
+        # root.withdraw()
         today = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
         filename = fd.asksaveasfilename(filetypes=[("GIF", ".gif")], initialfile=today, defaultextension="gif")
-        print(filename)
+        # # print(filename)
         # with open(filename, 'wb') as fp:
         #     for byte in capture:
         #         fp.write(byte)
         with open(filename, 'wb') as fp:
             fp.write(capture)
-        snapshot=Image.open(filename)
-        snapshot.save(filename, 'gif')
-        jpg_snapshot=snapshot.convert('RGBA')
+        # 만약 에러 발생시 여기 주석 해제
+        # ssnapshot=Image.open(filename)
+        # snapshot.save(filename, 'gif')
+        # jpg_snapshot=snapshot.convert('RGBA')
         self.instr.write(":MMEM:DEL 'R:PICTURE.GIF'")
         self.instr.write("*CLS")
         
-        return capture
+        return None
         
 
 # def con_device(add):
@@ -141,7 +143,7 @@ class Ui_MainWindow(QWidget):
         
         #default_img=QPixmap('C:/Users/PC/Desktop/20231026_102158.gif')
         self.setWindowTitle('SCREEN SHOT')
-        self.resize(1280,720)
+        self.resize(960,540)
 
         self.IP_address_input = QLineEdit(self)
         self.IP_address_input.move(75,75)
@@ -205,24 +207,26 @@ class Ui_MainWindow(QWidget):
             self.sa.device_connect(add)
             device_info=self.sa.get_identity()
             self.connect_button.setText("Disconnect")
+            self.connect_button.adjustSize()
             self.IP_label.setText("IP addr: "+add)
             self.IP_label.adjustSize()
             self.Device_Label.setText("Device Info: "+device_info)
             self.Device_Label.adjustSize()
 
     def screenshot_button_event(self):
-        snap_img=self.sa.screenshot()
+        self.sa.screenshot()
+        #  snap_img=self.sa.screenshot()
         # pixmap = PQ.toqpixmap(snap_img)
-        print(type(snap_img))
-        qp = QPixmap()
-        qp.loadFromData(snap_img)
+        # print(type(snap_img))
+        # qp = QPixmap()
+        # qp.loadFromData(snap_img)
 
     #     image = QPixmap(f'{snap_img}')
         
     #     # pixmap = QPixmap(image)    
     #     # print(type(snap_img))
         
-        self.snapshot_label.setPixmap(qp)
+        # self.snapshot_label.setPixmap(qp)
 
     def marker_button_event(self):   
         out=self.sa.marker_search()
