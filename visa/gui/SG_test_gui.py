@@ -254,11 +254,20 @@ class MyWindow(QWidget):
             self.display_row(self.current_row)
 #######################################################################################
     def frequency_set(self):
-        return None
+        frequency=self.text_input3.text()
+        self.SG.write(f"SOUR:FREQ {frequency}")
+        self.SG.write("OUTP ON")
+        
     def amplitude_set(self):
-        return None
+        amplitude=self.text_input5.text()
+        self.SG.write(f"SOUR:POW {amplitude}")
+        self.SG.write("OUTP ON")
+        
     def offset_set(self):
-        return None 
+        text_input6=self.text_input5.text()
+        self.SG.write(f"SOUR:POW {text_input6}")
+        self.SG.write("OUTP ON")
+        
 ########################################################################################
 if __name__ == '__main__':
     app = QApplication(sys.argv)
