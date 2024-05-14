@@ -21,7 +21,7 @@ instrument.stop_bits = pyvisa.constants.StopBits.one  # 정지 비트
 command = "*IDN?"  # 예제 명령
 response=instrument.write(command)
 # print(type(response))
-# time.sleep(0.1)
+time.sleep(0.1)
 
 # 데이터를 수신합니다.
 response = instrument.read("\n")

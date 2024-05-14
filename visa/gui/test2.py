@@ -10,7 +10,10 @@ from PIL import Image, ImageOps
 from os import environ 
 import qdarkstyle
 from PIL import ImageQt as PQ
-from time import sleep
+
+import time
+import datetime
+
 global flag
 flag=True
 
@@ -71,7 +74,9 @@ class Spectrumanalyzer:
         
     def device_connect(self, resource_string):
         self.safe_close()
-        self.instr = self.rm.open_resource(resource_string,chunk_size=8000,timeout=20000)
+        rmlist=self.rm.list_resources()
+        print(rmlist)
+        self.instr = self.rm.open_resource(resource_string,timeout=20000)
         self.instr.timeout = 100000
         self.instr.write("*CLS")
         
@@ -99,14 +104,37 @@ class Spectrumanalyzer:
 
 
     def screenshot(self):
+        code1_start=time.time()
         # self.instr.timeout = 100000
         self.instr.write(":MMEM:STOR:SCR 'R:PICTURE.GIF'")
+        self.instr.write(":MMEM:")
+        code1_end=time.time()
+        sec=code1_end-code1_start
+        res=datetime.timedelta(seconds=sec)
+        print("code1:",res)
         # self.instr.write(":MMEM:DATA? 'R:PICTURE.GIF'")
         # data = self.instr.read_raw()
         #capture = self.instr.query_binary_values(message=":MMEM:DATA? 'R:PICTURE.GIF'", container=list, datatype='c')
         # capture = self.instr.query_binary_values(message=":MMEM:DATA? 'R:PICTURE.GIF'",datatype='B',container=bytearray,is_big_endian=False, expect_termination=True)
-        capture = self.instr.query_binary_values(message=":MMEM:DATA? 'R:PICTURE.GIF'",datatype='B',container=bytearray)
+        # capture = self.instr.query_binary_values(message=":MMEM:DATA? 'R:PICTURE.GIF'",datatype='B',container=bytearray)
+        code2_start=time.time()
+        self.instr.write("MMEM:DATA? 'R:PICTURE.GIF'")
+        code2_end=time.time()
+        sec=code2_end-code2_start
+        res=datetime.timedelta(seconds=sec)
+        print("code2:",res)
+        code3_start=time.time()
+        capture = self.instr.read_raw()
+        code3_end=time.time()
+        sec=code3_end-code3_start
+        res=datetime.timedelta(seconds=sec)
+        print("code3:",res)
+            
         
+        
+        header_index = capture.find(b'GIF')
+        if (header_index > 0): # find GIF header
+            capture = capture[header_index:]
         # root = tkinter.Tk()
         # root.withdraw()
         today = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -115,8 +143,14 @@ class Spectrumanalyzer:
         # with open(filename, 'wb') as fp:
         #     for byte in capture:
         #         fp.write(byte)
+        code4_start=time.time()
         with open(filename, 'wb') as fp:
             fp.write(capture)
+        code4_end=time.time()
+        sec=code4_start-code4_end
+        res=datetime.timedelta(seconds=sec)
+        print("code4:",res)
+        
         # 만약 에러 발생시 여기 주석 해제
         # ssnapshot=Image.open(filename)
         # snapshot.save(filename, 'gif')

@@ -53,6 +53,8 @@ class SignalGenerator:
                 self.instr.data_bits = 8    # 데이터 비트
                 self.instr.parity = pyvisa.constants.Parity.none  # 패리티 비트 (없음)
                 self.instr.stop_bits = pyvisa.constants.StopBits.one  # 정지 비트
+
+            print( self.instr.write("*IDN?"))
         except Exception as ex:
             self.safe_close()
             raise FatalInternalSignalGenerator from ex

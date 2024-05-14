@@ -2,3 +2,6 @@ pyinstaller --onefile gui/gui_dev.py --hidden-import pyvisa-py
 pyinstaller --hidden-import=pyvisa_py --onefile gui_dev.py
 
 pyinstaller --onefile gui/PNASC.py --hidden-import pyvisa-py
+pyinstaller --onefile test2.py --hidden-import pyvisa-py
+SG_test_gui
+pyinstaller --onefile SG_test_gui.py --hidden-import pyvisa-py

@@ -86,8 +86,9 @@ class Spectrumanalyzer:
         # self.instr.write(":MMEM:DATA? 'R:PICTURE.GIF'")
         # data = self.instr.read_raw()
         #capture = self.instr.query_binary_values(message=":MMEM:DATA? 'R:PICTURE.GIF'", container=list, datatype='c')
-        # capture = self.instr.query_binary_values(message=":MMEM:DATA? 'R:PICTURE.GIF'",datatype='B',container=bytearray,is_big_endian=False, expect_termination=True)
-        capture = self.instr.query_binary_values(message=":MMEM:DATA? 'R:PICTURE.GIF'",datatype='B',container=bytearray)
+        capture = self.instr.query_binary_values(message=":MMEM:DATA? 'R:PICTURE.GIF'",datatype='B',container=bytearray,is_big_endian=False, expect_termination=True)
+        # capture = self.instr.query_binary_values(message=":MMEM:DATA? 'R:PICTURE.GIF'",datatype='B',container=bytearray)
+        # capture = self.instr.read_raw()
         root = tkinter.Tk()
         root.withdraw()
         today = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -186,7 +187,7 @@ class Ui_MainWindow(QWidget):
 
     def screenshot_button_event(self):
         snap_img=self.sa.screenshot()
-        self.snapshot_label.setMovie(snap_img)
+        # self.snapshot_label.setMovie(snap_img)
         
 
     def set_Freq_button_event(self):
