@@ -40,7 +40,8 @@ class SignalGenerator:
             raise FatalInternalSignalGenerator from ex
         
     def device_connect(self, resource_string,com_type):
-        try:
+            # list=self.rm.list_resources()
+            # print(list)
             if com_type=="lan":
                 self.safe_close()
                 self.instr = self.rm.open_resource(resource_string,chunk_size=8000,timeout=20000)
@@ -48,16 +49,21 @@ class SignalGenerator:
                 self.instr.write("*CLS")
             elif com_type=="serial":
                 self.safe_close()
-                self.instr = self.rm.open_resource(resource_string,chunk_size=8000,timeout=20000)
+                self.instr = self.rm.open_resource(resource_string)
                 self.instr.baud_rate = 9600  # 통신 속도
                 self.instr.data_bits = 8    # 데이터 비트
                 self.instr.parity = pyvisa.constants.Parity.none  # 패리티 비트 (없음)
                 self.instr.stop_bits = pyvisa.constants.StopBits.one  # 정지 비트
 
-            print( self.instr.write("*IDN?"))
-        except Exception as ex:
-            self.safe_close()
-            raise FatalInternalSignalGenerator from ex
+        #     print( self.instr.write("*IDN?"))
+        # except Exception as ex:
+        #     self.safe_close()
+        #     raise FatalInternalSignalGenerator from ex
+        #     idn=self.query("*IDN?")
+        #     idn=list(idn.split(","))
+        #     # idn=self.instr.read()
+        #     return idn[1]
+
 
 class MyWindow(QWidget):
     def __init__(self):
@@ -70,7 +76,7 @@ class MyWindow(QWidget):
         self.SG=SignalGenerator()
     
     def load_csv_data(self, filename):
-        with open(filename, 'r', encoding='utf-8') as csvfile:
+        with open(filename, 'r', encoding='utf-8-sig') as csvfile:
             reader = csv.reader(csvfile)
             for row in reader:
                 if len(row) >= 2:  # Ensure there are at least two columns
@@ -82,7 +88,7 @@ class MyWindow(QWidget):
         main_layout = QVBoxLayout()
 
         # 첫 번째 그룹 레이아웃
-        group1_box = QGroupBox('Group 1')
+        group1_box = QGroupBox('Protocol')
         group1_layout = QVBoxLayout(group1_box)
         radio_button1 = QRadioButton('LAN')
         radio_button2 = QRadioButton('Serial')
@@ -106,19 +112,19 @@ class MyWindow(QWidget):
         
 
         # 두 번째 그룹 레이아웃
-        group2_box = QGroupBox('Group 2')
+        group2_box = QGroupBox('Info and CSV Input')
         group2_layout = QVBoxLayout(group2_box)
-        button3 = QPushButton('Button 3',self)
-        button4 = QPushButton('Button 4')
-        button5 = QPushButton('Button 5')
+        button3 = QPushButton('Open CSV File',self)
+        button4 = QPushButton('←')
+        button5 = QPushButton('→')
         button3.clicked.connect(self.open_csv)
         button4.clicked.connect(self.prev_row)
         button5.clicked.connect(self.next_row)
         # group2_layout.addWidget(button4)
         # group2_layout.addWidget(button5)
         group2_label=QHBoxLayout()
-        self.label_a = QLabel("hello")
-        self.label_b = QLabel("olleh")
+        self.label_a = QLabel("Info :")
+        self.label_b = QLabel()
         group2_label.addWidget(self.label_a) 
         group2_label.addWidget(self.label_b)
         group2_layout.addLayout(group2_label)
@@ -128,14 +134,14 @@ class MyWindow(QWidget):
         prev_and_next_button_layout.addWidget(button5)
         group2_layout.addLayout(prev_and_next_button_layout)
         # 세 번째 그룹 레이아웃
-        group3_box = QGroupBox('Group 3')
+        group3_box = QGroupBox('SG Setting')
         group3_layout = QVBoxLayout(group3_box)  # 수정된 부분
         feq_label=QLabel("Freq    :")
         self.text_input3 = QLineEdit()
         self.text_input3.setFixedWidth(100)  # text_input3의 폭을 100으로 설정
         button6 = QPushButton('set')
         button6.setFixedWidth(40)  # button6의 폭을 100으로 설정
-
+        button6.clicked.connect(self.frequency_set)
         # 텍스트 입력과 버튼을 양쪽 끝으로 정렬하는 수평 레이아웃
         text_input_and_button_layout = QHBoxLayout()
         text_input_and_button_layout.addWidget(feq_label)
@@ -152,6 +158,7 @@ class MyWindow(QWidget):
         self.text_input5.setFixedWidth(100)
         button7 = QPushButton('set')
         button7.setFixedWidth(40)
+        button7.clicked.connect(self.amplitude_set)
         group3_and_button7_layout = QHBoxLayout()
         group3_and_button7_layout.addWidget(amp_label)
         group3_and_button7_layout.addWidget(self.text_input5)
@@ -166,6 +173,7 @@ class MyWindow(QWidget):
         text_input6.setFixedWidth(100)
         button8 = QPushButton('set')
         button8.setFixedWidth(40)
+        button8.clicked.connect(self.offset_set)
         group3_and_button8_layout = QHBoxLayout()
         group3_and_button8_layout.addWidget(offset_label)
         group3_and_button8_layout.addWidget(text_input6)
@@ -177,14 +185,15 @@ class MyWindow(QWidget):
         # 네 번째 그룹 레이아웃
         group4_box = QGroupBox('Group 4')
         group4_layout = QVBoxLayout(group4_box)  # 수정된 부분
-        button9 = QPushButton('Button 9')
-        button10 = QPushButton('Button 10')
+        button9 = QPushButton('RF ON')
+        button10 = QPushButton('RF OFF')
         button11 = QPushButton('Button 11')
 
         group4_layout.addWidget(button9)
         group4_layout.addWidget(button10)
         group4_layout.addWidget(button11)
-
+        button9.clicked.connect(self.RF_On)
+        button10.clicked.connect(self.RF_Off)
         # 그룹3_layout과 그룹4_layout을 수평으로 결합
         group3_and_group4_layout = QHBoxLayout()
         group3_and_group4_layout.addWidget(group3_box, stretch=1)  # group3_box가 늘어날 수 있도록 stretch 추가
@@ -215,14 +224,15 @@ class MyWindow(QWidget):
                     add=self.text_input1.text()
                     add=f"TCPIP::{add}::INSTR"
                     # print(add)
-                    self.SG.device_connect(add,com_tpye)
-
+                    info=self.SG.device_connect(add,com_tpye)
+                    self.label_b.setText(info)
                 elif radio_button.text()=="Serial":
                     com_tpye="serial"
                     add=self.text_input1.text()
                     add=f"{add}::INSTR"
                     # print(add)
-                    self.SG.device_connect(add,com_tpye)
+                    info=self.SG.device_connect(add,com_tpye)
+                    self.label_b.setText(info)
                 else : 
                     None
 
@@ -256,12 +266,28 @@ class MyWindow(QWidget):
             self.display_row(self.current_row)
 #######################################################################################
     def frequency_set(self):
-        return None
+        frequency=self.text_input3.text()
+        self.SG.instr.write(f"SOUR:FREQ {frequency}")
+        self.SG.instr.write("OUTP ON")
+        
     def amplitude_set(self):
-        return None
+        amplitude=self.text_input5.text()
+        self.SG.instr.write(f"SOUR:POW {amplitude}")
+        self.SG.instr.write("OUTP ON")
+        
     def offset_set(self):
-        return None 
+        offset=self.text_input5.text()
+        self.SG.instr.write(f"SOUR:POW:OFFS {offset}")
+        self.SG.instr.write("OUTP ON")
+        
+    def RF_On(self):
+        self.SG.instr.write("OUTP ON")
+    def RF_Off(self):
+        self.SG.instr.write("OUTP OFF")
+
+         
 ########################################################################################
+
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     window = MyWindow()
