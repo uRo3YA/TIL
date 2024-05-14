@@ -1,0 +1,7 @@
+SELECT LPAD(레벨, DECODE(레벨,1,1,(레벨*2)-1),'.') AS LEVELNO,
+       레벨 AS LVNO,
+       부품번호,
+       수량
+  FROM 부품테이블
+START WITH 상위품목=80869600
+CONNECT BY PRIOR 부품번호=상위품목;

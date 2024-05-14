@@ -1,82 +1,26 @@
-d_y = [-1, -1, -1, 0, 0, 1, 1, 1]
-d_x = [-1, 0, 1, -1, 1, -1, 0, 1]
+import openpyxl
 
-mine_cnt = "*"
-empty = "."
+# 텍스트 파일에서 데이터 읽기
+with open('data.txt', 'r', encoding='utf-8') as file:
+    lines = file.readlines()
 
-n = 8
-# board = [
-#     "...**..*",
-#     "......*.",
-#     "....*...",
-#     "........",
-#     "........",
-#     ".....*..",
-#     "...**.*.",
-#     ".....*..",
-# ]
-# open_board = [
-#     "xxxx....",
-#     "xxxx....",
-#     "xxxx....",
-#     "xxxxx...",
-#     "xxxxx...",
-#     "xxxxx...",
-#     "xxx.....",
-#     "xxxxx...",
-# ]
+# 엑셀 파일 생성
+wb = openpyxl.Workbook()
+sheet = wb.active
 
-n = int(input())
-board = []
-for _ in range(n):
-    board.append(list(input()))
-    
-open_board = []
-for _ in range(n):
-    open_board.append(list(input()))
+row = 1
+for i in range(0, len(lines), 2):  # 파일 이름과 파일 크기가 번갈아 나오므로 2씩 증가
+    filename = lines[i].strip()  # 파일 이름은 현재 줄
+    if i + 1 < len(lines):  # 파일 크기를 읽어올 줄이 리스트 범위 내에 있는지 확인
+        size = lines[i + 1].strip()  # 파일 크기는 다음 줄
+    else:
+        size = ""  # 파일 크기가 없는 경우
 
-# result_board 생성
-result_board = []
-for i in range(n):
-    temp = ["."] * n
-    result_board.append(temp)
-# pprint(result_board)
+    # 엑셀에 데이터 쓰기
+    sheet.cell(row=row, column=1, value=filename)
+    sheet.cell(row=row, column=2, value=size)
 
+    row += 1
 
-board = list(board)
-open_board = list(open_board)
-mine_find = False
-
-# 이중반복문
-for y in range(n):
-    for x in range(n):
-        # 현재 위치가 오픈한 위치
-        # open_board -> x
-        if open_board[y][x] == "x":
-            mine_cnt = 0
-            for d in range(8):
-                search_y = y + d_y[d]
-                search_x = x + d_x[d]
-                # search_y search_x의 범위는 리스트를 벗어나면 안된다.
-                # 리스트의 범위는 0 ~ 7(리스트의 길이 8)
-
-                if 0 <= search_y <= n-1 and 0<= search_x <= n-1:
-                    if board[search_y][search_x] == mine_cnt:
-                        mine_cnt += 1
-
-            result_board[y][x] = str(mine_cnt)
-            
-            # 현재 오픈한 위치에 mine_cnt가 있는지 확인 
-            if board[y][x] == mine_cnt:
-                mine_find = True
-
-# mine_cnt를 발견했으면 모든 mine_cnt의 위치를 result_board에 표시
-if mine_find == True:
-    for y in range(n):
-        for x in range(n):
-            if board[y][x] == mine_cnt:
-                result_board[y][x] = mine_cnt
-
-# pprint(result_board)
-for row in result_board:
-    print("".join(row))
+# 엑셀 파일 저장
+wb.save('data.xlsx')
